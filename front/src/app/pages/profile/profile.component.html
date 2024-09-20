@@ -1,0 +1,87 @@
+<app-navbar></app-navbar>
+
+<div class="bg-gray-200 antialiased pt-20 pb-20 w-full h-auto" style="height: calc(100vh - 140px)">
+  <div class="container mx-auto mt-20">
+    <div class="bg-white relative shadow rounded-lg max-w-screen mx-5 md:px-0 md:w-5/6 lg:w-4/6 xl:w-3/6 md:mx-auto">
+      <div class="flex justify-center">
+        <div class="flex justify-center">
+          <img [src]="user.avatar ? 'http://localhost:8000/storage/avatars/' + user.avatar : user.oauth_avatar"
+            alt="Avatar"
+            class="rounded-full mx-auto absolute -top-20 w-32 h-32 shadow-md border-4 border-white transition duration-200 transform hover:scale-110 hover:cursor-pointer"
+            (click)="triggerFileInput()">
+          <input type="file" id="fileInput" style="display: none;" (change)="onFileSelected($event)">
+        </div>
+        <span *ngIf="isUserNewUser"
+          class="absolute -top-10 right-0 bg-indigo-100 text-indigo-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-indigo-900 dark:text-indigo-300">
+          NOUVEL UTILISATEUR
+        </span>
+      </div>
+
+      <div class="mt-16">
+        <h1 class="font-bold text-center text-3xl text-gray-900">{{ user.name }}</h1>
+        <h3 class="text-center text-sm text-gray-500 font-medium mt-2">&#64;{{ user.pseudo }}</h3>
+        <p class="text-center text-sm text-gray-400 font-medium my-10">{{ user.bio || 'Aucune présentation.' }}</p>
+        <div class="my-5 px-6 space-y-3">
+          <button *ngIf="isOwner"
+            class="w-full text-gray-900 block rounded-lg text-center font-medium leading-6 px-6 py-3 bg-gray-200 hover:bg-gray-300 hover:text-black"
+            (click)="openEditDialog()">
+            Modifier le profil
+          </button>
+          <!-- <a *ngIf="!isOwner" href="#"
+            class="text-gray-200 block rounded-lg text-center font-medium leading-6 px-6 py-3 bg-gray-900 hover:bg-black hover:text-white">
+            Se connecter à <span class="font-bold">&#64;<span class="underline">{{ user.pseudo }}</span></span>
+          </a> -->
+        </div>
+        <!-- <div class="flex justify-between items-center my-5 px-6">
+          <button
+            class="text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded transition duration-150 ease-in font-medium text-sm text-center w-full py-3">0
+            abonnés
+          </button>
+          <button
+            class="text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded transition duration-150 ease-in font-medium text-sm text-center w-full py-3">0
+            abonnements
+          </button>
+        </div> -->
+
+        <div class="w-full">
+          <h3 class="font-medium text-gray-900 text-left px-6">Activité récente</h3>
+          <div class="mt-5 w-full flex flex-col items-center overflow-hidden text-sm">
+            <div *ngFor="let event of events"
+              class="flex items-center justify-between w-full">
+              <a href="/event/{{ event.slug }}" 
+                class="flex items-center justify-between w-full border-t border-gray-100 text-gray-600 py-4 pl-6 pr-3 w-full block hover:bg-gray-100 transition duration-150">
+                <div class="flex flex-col">
+                  <span>{{ event.title }}</span>
+                  <span *ngIf="event.timeAgo === '1'" class="text-green-700 text-xs mt-1">Cet événement est toujours
+                    actif.</span>
+                  <span *ngIf="event.timeAgo === '0'" class="text-red-600 text-xs mt-1">Cet événement est terminé.</span>
+                  <span *ngIf="event.visibility" class="text-gray-400 text-xs mt-1">{{ event.visibility === 'public' ? 'Accès publique' : 'Accès privé' }}</span>
+                </div>
+                <div class="flex space-x-2">
+                  <span
+                    class="me-2 px-2.5 py-0.5 rounded text-sm font-medium {{ event.role === 'organizer' ? 'bg-green-900 text-green-300' : 'bg-gray-700 text-gray-300' }}">{{
+                    event.role }}</span>
+                  <span
+                    [ngClass]="event.type === 'Groupe' ? 'bg-green-900 text-green-300' : 'bg-blue-900 text-blue-300'"
+                    class="me-2 px-2.5 py-0.5 rounded text-sm font-medium">
+                  {{ event.type }}</span>
+                </div>
+              </a>
+            </div>
+            <div *ngIf="events.length === 0" class="w-full text-center text-gray-600 mt-2 mb-10">Aucune activité récente.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="px-6 py-6 space-y-3">
+        <a *ngIf="isOwner" href="/organizer/new-event"
+          class="w-full text-gray-200 block rounded-lg text-center cursor-pointer font-medium leading-6 px-6 py-3 bg-gray-900 hover:bg-black hover:text-white"
+          (click)="openCreateEventDialog()">Créer un événement
+        </a>
+        <button *ngIf="isOwner"
+          class="w-full text-gray-900 block rounded-lg text-center font-medium leading-6 px-6 py-2 bg-gray-200 hover:bg-gray-300 hover:text-black"
+          (click)="logout()">Se déconnecter
+        </button>
+      </div>
+    </div>
+  </div>

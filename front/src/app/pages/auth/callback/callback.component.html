@@ -1,0 +1,9 @@
+<div class="min-h-screen flex items-center justify-center space-y-5 bg-gray-200">
+  <div *ngIf="isLoading" class="flex items-center flex-col space-y-8">
+    <div class="lds-dual-ring"></div>
+    <p class="text-lg text-gray-600">Bienvenue sur <span class="font-bold">Eventify</span>...</p>
+  </div>
+  <div *ngIf="!isLoading && user">
+    <h2 class="text-center text-3xl font-extrabold text-gray-900 mb-4">Bienvenue {{ user.name }}</h2>
+  </div>
+</div>

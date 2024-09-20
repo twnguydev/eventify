@@ -1,0 +1,79 @@
+<app-navbar activePage="discover-events"></app-navbar>
+
+<div class="flex flex-col md:flex-row" style="height: calc(100svh - 70px)">
+  <div *ngIf="isMapLoading" class="w-full md:w-3/5 h-full fixed top-70 bg-gray-500 bg-opacity-50 flex justify-center items-center" style="z-index: 9999;">
+    <div class="inline-block w-16 h-16">
+      <div class="lds-dual-ring"></div>
+    </div>
+  </div>
+
+  <div id="map" class="w-full md:w-3/5 h-screen md:h-full"></div>
+
+  <div class="w-full md:w-2/5 min-h-1/4 max-h-2/4 bg-gray-100 px-4 py-6 md:p-6 overflow-y-auto">
+
+    <details class="mb-4" open>
+      <summary class="text-xl flex justify-between font-bold p-2 cursor-pointer text-gray-800">Filtres</summary>
+      <div class="mt-2">
+        <input [(ngModel)]="cityName" (ngModelChange)="onCityNameChange()"
+          class="block w-full mb-2 text-left p-3 bg-gray-200 rounded-md hover:bg-gray-300" type="text"
+          placeholder="Ville" />
+        <input [(ngModel)]="eventName" (ngModelChange)="onEventNameChange()"
+          class="block w-full mb-2 text-left p-3 bg-gray-200 rounded-md hover:bg-gray-300" type="text"
+          placeholder="Nom de l'événement" />
+        <div class="flex flex-col md:flex-row md:space-x-2">
+          <select [(ngModel)]="sort" (ngModelChange)="onSortChange()"
+            class="block w-full mb-2 text-left p-3 bg-gray-200 rounded-md hover:bg-gray-300">
+            <option [ngValue]="null" disabled>Trier par</option>
+            <option value="date_asc">Date croissante</option>
+            <option value="date_desc">Date décroissante</option>
+          </select>
+          <select [(ngModel)]="distance" (ngModelChange)="onDistanceChange()"
+            class="block w-full mb-2 text-left p-3 bg-gray-200 rounded-md hover:bg-gray-300">
+            <option [ngValue]="null" disabled>Distance</option>
+            <option value="distance_asc">Distance croissante</option>
+            <option value="distance_desc">Distance décroissante</option>
+          </select>
+          <select [(ngModel)]="limit" (ngModelChange)="onLimitChange()"
+            class="block w-full mb-2 text-left p-3 bg-gray-200 rounded-md hover:bg-gray-300">
+            <option [ngValue]="10">Affichage</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+            <option value="200">200</option>
+            <option value="500">Maximum</option>
+          </select>
+        </div>
+      </div>
+    </details>
+
+    <details class="mb-4">
+      <summary class="text-xl flex justify-between font-bold cursor-pointer p-2 text-gray-800">Événements à venir</summary>
+      <div class="mt-2 text-gray-800">
+        <div *ngIf="filteredEvents.length === 0" class="mt-10 w-50 space-y-4">
+          <h3 class="text-xl text-gray-500">Oh oh... 🥲</h3>
+          <p class="text-gray-400">Aucun événement ne correspond à vos critères de recherche.</p>
+          <p class="text-gray-400">Essayez de modifier vos filtres ou créez un événement pour que d'autres personnes puissent vous rejoindre !</p>
+          <a href="/organizer/new-event" class="inline-block text-center py-2 px-6 border-2 border-transparent bg-[#00829B] hover:text-[#00829B] hover:bg-transparent hover:border-[#00829B] text-sm text-white font-bold rounded-xl transition duration-200">Créer un événement</a>
+        </div>
+
+        <ul>
+          <li *ngFor="let event of filteredEvents" class="mb-4">
+            <div class="p-4 bg-white rounded-md shadow-md hover:bg-gray-50">
+              <time class="text-[#00829B] text-sm font-medium uppercase">{{ event.dates.start | utcDate:'dd/MM/yyyy, HH:mm a':true }} &mdash; {{ event.dates.end | utcDate:'dd/MM/yyyy, HH:mm a':true }}</time>
+              <h3 class="text-xl font-semibold my-2">{{ event.title }}</h3>
+              <p 
+                [ngClass]="{'text-green-600': event.distance !== undefined && event.distance < 10, 'text-yellow-600': event.distance !== undefined && event.distance >= 10 && event.distance < 50, 'text-red-600': event.distance !== undefined && event.distance >= 50}"
+                class="text-gray-600 my-3 uppercase font-semibold text-sm" 
+                *ngIf="event.distance !== undefined">
+                {{ event.distance | number: '1.0-2' }} km de vous
+              </p>
+              <span class="text-sm text-gray-500">{{ event.description | slice: 0:200 }}...</span>
+              <div class="flex flex-col md:flex-row md:items-center justify-between mt-2">
+                <a *ngIf="event.url" href="/event/{{ event.slug }}" class="inline-block text-center py-2 px-6 border-2 hover:border-transparent hover:bg-[#00829B] text-[#00829B] bg-transparent border-[#00829B] hover:text-white text-sm font-bold rounded-xl transition duration-200 mt-4">Plus d'informations</a>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </details>
+  </div>
+</div>

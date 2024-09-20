@@ -1,0 +1,31 @@
+<div class="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center z-50">
+  <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-xl">
+    <h2 class="text-xl font-semibold mb-4">Modifier le profil</h2>
+    <form [formGroup]="profileForm" (ngSubmit)="submit()">
+      <div class="mb-4">
+        <label class="block text-gray-700">Nom</label>
+        <input type="text" formControlName="name" class="w-full border border-gray-300 p-2 rounded-md">
+      </div>
+      <div class="mb-4">
+        <label class="block text-gray-700">Pseudo</label>
+        <input type="text" formControlName="pseudo" class="w-full border border-gray-300 p-2 rounded-md">
+      </div>
+      <div class="mb-4">
+        <label class="block text-gray-700">Adresse e-mail</label>
+        <input type="email" formControlName="email" class="w-full border border-gray-300 p-2 rounded-md" readonly>
+      </div>
+      <div class="mb-4">
+        <label class="block text-gray-700">Biographie</label>
+        <textarea formControlName="bio" class="w-full border border-gray-300 p-2 rounded-md resize-none" rows="3"></textarea>
+      </div>
+      <div class="mb-4">
+        <label class="block text-gray-700">Avatar</label>
+        <input type="file" (change)="onFileSelected($event)" class="w-full border border-gray-300 p-2 rounded-md">
+      </div>
+      <div class="flex justify-end space-x-2">
+        <button type="button" (click)="close()" class="text-gray-900 block rounded-lg text-center font-medium leading-6 px-6 py-3 bg-gray-200 hover:bg-gray-300 hover:text-black">Annuler</button>
+        <button type="submit" class="w-full text-gray-200 block rounded-lg text-center font-medium leading-6 px-6 py-3 bg-gray-900 hover:bg-black hover:text-white">Enregistrer</button>
+      </div>
+    </form>
+  </div>
+</div>

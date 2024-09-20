@@ -1,0 +1,52 @@
+<div class="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center z-50">
+  <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-xl">
+    <h2 class="text-xl font-semibold mb-4">Modifier les détails du groupe</h2>
+    <form [formGroup]="groupForm" (ngSubmit)="submit()">
+      <div class="mb-4">
+        <label class="block text-gray-700">Nom de l'événement</label>
+        <input type="text" formControlName="title" class="w-full border border-gray-300 p-2 rounded-md">
+      </div>
+      <div class="mb-4">
+        <label class="block text-gray-700">Description</label>
+        <input type="text" formControlName="description" class="w-full border border-gray-300 p-2 rounded-md">
+      </div>
+      <div class="mb-4">
+        <label class="block text-gray-700">Visibilité</label>
+        <select formControlName="visibility" class="w-full border border-gray-300 p-2 rounded-md">
+          <option value="public" [selected]="data.group.visibility === 'public'">Public</option>
+          <option value="private" [selected]="data.group.visibility === 'private'">Privé</option>
+        </select>
+      </div>
+      <div class="mb-4">
+        <label for="userSearch" class="block text-gray-700 mb-1">Invitation d'utilisateurs</label>
+        <input type="text" id="userSearch" formControlName="userSearch"
+          class="w-full border border-gray-300 p-2 rounded-md" placeholder="Pseudo de l'utilisateur"
+          (ngModelChange)="onUserSearch()" autocomplete="off">
+
+          <div class="absolute bg-white border border-gray-300 mt-2 rounded-lg z-10">
+            <ul class="list-none p-0 m-0">
+              <li *ngFor="let user of filteredUsers" (click)="selectUser(user)" class="cursor-pointer p-2 hover:bg-gray-100">
+                &#64;{{ user }}
+              </li>
+            </ul>
+          </div>
+
+        <div *ngIf="selectedUsers.length > 0" class="flex flex-wrap gap-2 mt-4 px-2">
+          <span *ngFor="let user of selectedUsers"
+            class="bg-indigo-100 text-indigo-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-indigo-900 dark:text-indigo-300 flex items-center">
+            {{ user }}
+            <button type="button" (click)="removeUser(user)" class="ml-2 text-red-400 hover:text-red-600">
+              &times;
+            </button>
+          </span>
+        </div>
+      </div>
+      <div class="flex justify-end space-x-2">
+        <button type="button" (click)="close()"
+          class="text-gray-900 block rounded-lg text-center font-medium leading-6 px-6 py-3 bg-gray-200 hover:bg-gray-300 hover:text-black">Annuler</button>
+        <button type="submit"
+          class="w-full text-gray-200 block rounded-lg text-center font-medium leading-6 px-6 py-3 bg-gray-900 hover:bg-black hover:text-white">Enregistrer</button>
+      </div>
+    </form>
+  </div>
+</div>
