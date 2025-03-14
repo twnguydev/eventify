@@ -1,0 +1,35 @@
+{
+  "title": "Eventify",
+  "shortDescription": "Plateforme d'agrégation d'événements",
+  "description": "Eventify est une plateforme d'agrégation d'événements. Elle permet de rechercher des événements à proximité, de les filtrer par catégorie et de les ajouter à ses favoris. Elle a été développée avec Angular et Laravel. Elle permet de créer des groupes d'utilisateurs et de discuter avec eux.",
+  "images": [
+    "/images/projects/eventify.webp"
+  ],
+  "tags": ["Angular", "Tailwind", "TypeScript", "Laravel", "PHP", "MySQL", "Docker"],
+  "gradient": "amber-yellow",
+  "type": "school",
+  "sourceUrl": "https://github.com/twnguydev/eventify",
+  "demoUrl": "https://eventify.twnguy.dev",
+  "skills": [
+    {
+      "name": "Compréhension du projet et cadrage",
+      "descriptions": [
+        "getDescriptionById('RNCP01-3')",
+        "getDescriptionById('RNCP01-5')"
+      ],
+      "category": "Management",
+      "rncpSkillIds": ["RNCP01-3", "RNCP01-5"],
+      "rncpReference": "RNCP38436BC01 - Cadrer un projet et conceptualiser une solution web"
+    },
+    {
+      "name": "Conception de l'interface utilisateur",
+      "descriptions": [
+        "getDescriptionById('RNCP02-4')",
+        "getDescriptionById('RNCP02-5')"
+      ],
+      "category": "Développement",
+      "rncpSkillIds": ["RNCP02-4", "RNCP02-5"],
+      "rncpReference": "RNCP38436BC02 - Développer une solution web"
+    }
+  ]
+}
