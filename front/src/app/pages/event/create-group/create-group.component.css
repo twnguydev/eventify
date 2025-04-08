@@ -1,31 +1,136 @@
-.lds-dual-ring,
-.lds-dual-ring:after {
-  box-sizing: border-box;
+/* Styles pour la page de création de groupe */
+
+/* Animation d'apparition générale */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-.lds-dual-ring {
-  display: inline-block;
-  width: 80px;
-  height: 80px;
+.bg-white {
+  animation: fadeIn 0.5s ease-out;
 }
 
-.lds-dual-ring:after {
-  content: " ";
-  display: block;
-  width: 64px;
-  height: 64px;
-  margin: 8px;
-  border-radius: 50%;
-  border: 6.4px solid currentColor;
-  border-color: currentColor transparent currentColor transparent;
-  animation: lds-dual-ring 1.2s linear infinite;
+/* Style pour les options de visibilité au survol */
+.hover\:bg-gray-50:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transform: translateY(-2px);
 }
 
-@keyframes lds-dual-ring {
-  0% {
-    transform: rotate(0deg);
+/* Effet de focus sur les champs de formulaire */
+.focus\:ring-2:focus {
+  box-shadow: 0 0 0 3px rgba(0, 130, 155, 0.2);
+}
+
+/* Effet de sélection des options de visibilité */
+.peer:checked ~ .peer-checked\:border-\[\#00829B\] {
+  box-shadow: 0 0 0 2px rgba(0, 130, 155, 0.3);
+}
+
+/* Animation au survol des boutons */
+button:hover svg {
+  transform: scale(1.2);
+  transition: transform 0.2s ease;
+}
+
+/* Effet de survol pour l'image de l'événement */
+.hover\:scale-105 {
+  transition: transform 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+/* Animation pour les badges d'utilisateurs sélectionnés */
+@keyframes popIn {
+  0% { transform: scale(0.8); opacity: 0; }
+  70% { transform: scale(1.1); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.bg-\[\#00829B\]\/10 {
+  animation: popIn 0.3s forwards;
+}
+
+/* Effet de survol pour les résultats de recherche d'utilisateurs */
+.hover\:bg-gray-100:hover {
+  background-color: rgba(243, 244, 246, 0.7);
+}
+
+/* Animation pour les résultats de recherche */
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.absolute.z-10.mt-1 {
+  animation: slideDown 0.2s ease-out;
+}
+
+/* Effet du gradient de fond de la page */
+.from-slate-50.to-slate-100 {
+  background-size: 200% 200%;
+  animation: gradientShift 8s ease infinite;
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Animation du gradient météo */
+.from-blue-50.to-sky-50 {
+  background-size: 200% 200%;
+  animation: skyGradient 5s ease infinite;
+}
+
+@keyframes skyGradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Effet d'animation pour les champs obligatoires */
+input:required, textarea:required {
+  background-image: linear-gradient(to right, rgba(0, 130, 155, 0.1) 0%, transparent 0%);
+  background-size: 0% 100%;
+  background-repeat: no-repeat;
+  transition: background-size 0.3s ease;
+}
+
+input:required:focus, textarea:required:focus {
+  background-size: 100% 100%;
+}
+
+/* Style pour les placeholders */
+::placeholder {
+  color: rgba(107, 114, 128, 0.5);
+  transition: color 0.2s ease;
+}
+
+input:focus::placeholder, textarea:focus::placeholder {
+  color: rgba(107, 114, 128, 0.3);
+}
+
+/* Optimisations pour le mobile */
+@media (max-width: 640px) {
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
   }
-  100% {
-    transform: rotate(360deg);
+  
+  .p-5 {
+    padding: 1rem;
+  }
+  
+  .h-72 {
+    height: 200px;
+  }
+}
+
+/* Support pour les préférences de réduction de mouvement */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

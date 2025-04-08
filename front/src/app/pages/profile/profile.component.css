@@ -1,0 +1,109 @@
+/* Styles pour la page de profil */
+
+/* Animation de survol pour l'avatar */
+.group:hover .group-hover\:shadow-lg {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  transform: translateY(-2px);
+}
+
+/* Animation d'apparition progressive pour les cartes */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.bg-white {
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* Effet de survol pour les événements */
+.hover\:bg-gray-50:hover {
+  background-color: rgba(249, 250, 251, 0.8);
+}
+
+/* Transitions douces pour tous les éléments interactifs */
+button, a, .transition-colors {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Amélioration pour les badges */
+.px-2\.5 {
+  position: relative;
+  overflow: hidden;
+}
+
+.px-2\.5::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: currentColor;
+  opacity: 0.1;
+  z-index: -1;
+}
+
+/* Effet de focus sur les boutons */
+button:focus, a:focus {
+  outline: 2px solid rgba(0, 130, 155, 0.5);
+  outline-offset: 2px;
+}
+
+/* Amélioration de l'effet du survol sur les boutons principaux */
+.bg-\[\#00829B\]:hover {
+  box-shadow: 0 4px 6px -1px rgba(0, 130, 155, 0.1), 0 2px 4px -1px rgba(0, 130, 155, 0.06);
+}
+
+/* Animation pour le bouton d'édition du profil */
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.hover\:text-\[\#00829B\]:hover svg {
+  animation: pulse 0.5s infinite;
+}
+
+/* Style pour le texte bio vide */
+.text-gray-600:empty::before {
+  content: 'Aucune présentation.';
+  color: #9CA3AF;
+  font-style: italic;
+}
+
+/* Optimisation pour mobile */
+@media (max-width: 640px) {
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  h1 {
+    font-size: 1.5rem;
+  }
+  
+  .w-32, .h-32 {
+    width: 6rem;
+    height: 6rem;
+  }
+  
+  .absolute.transform.-translate-x-1\/2.-bottom-16 {
+    bottom: -12px;
+  }
+  
+  .mt-20 {
+    margin-top: 4rem;
+  }
+}
+
+/* Amélioration de l'accessibilité */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

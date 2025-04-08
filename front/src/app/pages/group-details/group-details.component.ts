@@ -69,26 +69,27 @@ export class GroupDetailsComponent implements OnInit, AfterViewChecked {
     this.userId = this.authService.user?.id || 0;
     this.loadEventDetails();
     this.loadGroupDetails();
-
-    if (!this.checkUserIsMember()) {
-      this.router.navigate([`/event/${this.slug}`]);
-    }
   }
 
   ngAfterViewChecked() {
     this.scrollToBottom();
   }
 
-  scrollToBottom() {
-    try {
-      this.messageContainer.nativeElement.scrollTop = this.messageContainer.nativeElement.scrollHeight;
-    } catch(err) { }
-  }
-
   checkUserIsMember(): boolean {
+    console.log('🔍 User:', this.authService.user);
+    console.log('👥 Participants:', this.participants);
+    console.log('🎓 isUserOrganizer:', this.isUserOrganizer);
+
     if (!this.authService.user) return false;
     if (!this.participants) return false;
-    return this.participants.some(participant => participant.id === this.authService.user?.id) || this.isUserOrganizer;
+
+    const participantsArray = Array.isArray(this.participants)
+      ? this.participants
+      : Object.values(this.participants);
+
+    return participantsArray.some(
+      participant => Number(participant.id) === Number(this.authService.user?.id)
+    ) || this.isUserOrganizer;
   }
 
   loadEventDetails(): void {
@@ -151,8 +152,9 @@ export class GroupDetailsComponent implements OnInit, AfterViewChecked {
       const coordinates: L.LatLngExpression = [this.event.location.coordinates[0], this.event.location.coordinates[1]];
       this.map = L.map('map', { zoomControl: false }).setView(coordinates, 13);
 
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap contributors'
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+        subdomains: 'abcd',
+        maxZoom: 19
       }).addTo(this.map);
     }
   }
@@ -272,10 +274,9 @@ export class GroupDetailsComponent implements OnInit, AfterViewChecked {
           this.messages.sort((a, b) => new Date(a.posted_at).getTime() - new Date(b.posted_at).getTime());
           setTimeout(() => this.isLoading = false, 1000);
 
-          console.log('Participants:', this.participants);
-          console.log('Group:', this.group);
-          console.log('Is user organizer:', this.isUserOrganizer);
-          console.log('User organizer:', this.userOrganizer);
+          if (!this.checkUserIsMember()) {
+            this.router.navigate([`/event/${this.slug}`]);
+          }
         },
         error: (error: HttpErrorResponse) => {
           if (error.status === 404) {
@@ -394,5 +395,23 @@ export class GroupDetailsComponent implements OnInit, AfterViewChecked {
 
   closeImageModal(): void {
     this.isImageModalOpen = false;
+  }
+
+  scrollToBottom() {
+    if (this.messageContainer) {
+      const element = this.messageContainer.nativeElement;
+      element.scrollTop = element.scrollHeight;
+    }
+  }
+
+  sendMessage() {
+    if (this.message && this.message.trim().length > 0) {
+      this.onSendMessage();
+      this.message = "";
+
+      setTimeout(() => {
+        this.scrollToBottom();
+      }, 100);
+    }
   }
 }

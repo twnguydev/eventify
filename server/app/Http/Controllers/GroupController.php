@@ -32,45 +32,45 @@ class GroupController extends Controller
                 ], 404);
             }
         }
-
+    
         $group = Group::where('id', $groupId)->where('event_slug', $slug)->first();
-
+    
         if (!$group) {
             return response()->json([
                 'message' => 'Groupe non trouvé pour cet événement.'
             ], 404);
         }
-
-        $participants = DB::table('user_groups')
-            ->where('group_id', $groupId)
-            ->join('users', 'user_groups.user_id', '=', 'users.id')
-            ->join('groups', 'groups.id', '=', 'user_groups.group_id')
-            ->join('rooms', 'rooms.id_group', '=', 'user_groups.group_id')
-            ->join('room_user', 'room_user.room_id', '=', 'rooms.id')
-            ->select('users.*', 'room_user.is_creator')
-            ->get()
-            ->unique('id');
-
+    
         $room = Room::where('id_group', $groupId)->first();
         if (!$room) {
             return response()->json([
                 'message' => 'Salon associé au groupe non trouvé.'
             ], 404);
         }
-        
+
+        $participants = DB::table('room_user')
+            ->where('room_user.room_id', $room->id)
+            ->join('users', 'room_user.user_id', '=', 'users.id')
+            ->select('users.id', 'users.pseudo', 'users.avatar', 'users.oauth_avatar', 'room_user.is_creator')
+            ->get()
+            ->map(function ($p) {
+                $p->is_creator = (int) $p->is_creator;
+                return $p;
+            });
+    
         $messages = DB::table('messages')
             ->where('room_id', $room->id)
             ->join('users', 'messages.user_id', '=', 'users.id')
             ->select('messages.message', 'messages.posted_at', 'users.id', 'users.pseudo', 'users.avatar', 'users.oauth_avatar')
             ->orderBy('messages.posted_at', 'desc')
             ->get();
-
+    
         return response()->json([
             'group' => [
                 'title' => $group->title,
                 'description' => $group->description,
                 'visibility' => $group->visibility,
-                'creator' => $participants->where('is_creator', 1)->first(),
+                'creator' => $participants->first(fn($p) => $p->is_creator === 1),
                 'participants' => $participants,
             ],
             'room' => [

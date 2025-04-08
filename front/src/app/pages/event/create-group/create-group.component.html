@@ -1,174 +1,333 @@
 <app-navbar></app-navbar>
 
-<div class="bg-gray-200 antialiased pt-20 pb-20 w-full">
-  <div class="mx-auto px-5 lg:px-10 xl:px-20">
-    <div class="flex flex-col lg:flex-row justify-between gap-4">
-      <div class="bg-white shadow rounded-lg w-full h-full lg:w-1/2 p-6">
-        <h3 class="font-semibold text-lg text-gray-900 mb-4">Organiser un groupe</h3>
-
-        <h5 class="text-gray-700 mb-6 font-bold">Vous pouvez créer un groupe de participation pour cet événement et inviter des utilisateurs
-          spécifiques.</h5>
-
-        <form [formGroup]="groupForm" (ngSubmit)="createGroup()">
-          <div class="mb-6 rounded-lg border border-gray-300">
-            <p class="text-gray-700 p-4 font-bold">Informations générales</p>
-            <div class="w-full p-4 pb-0 md:pb-4">
-              <label for="name" class="block text-gray-700 mb-1">Nom du groupe</label>
-              <input type="text" id="name" formControlName="name" class="w-full border border-gray-300 p-2 rounded-md"
-                placeholder="Nom du groupe">
-              <div *ngIf="groupForm.get('name')?.touched && groupForm.get('name')?.invalid"
-                class="text-red-500 text-sm mt-2">
-                <div *ngIf="groupForm.get('name')?.hasError('required')">Le nom du groupe est requis.</div>
-                <div *ngIf="groupForm.get('name')?.hasError('minlength')">Le nom doit comporter au moins 5 caractères.
+<!-- Page principale avec gradient subtil en arrière-plan -->
+<div class="bg-gradient-to-b from-slate-50 to-slate-100 min-h-screen pt-6 pb-10">
+  <div class="container mx-auto px-4 md:px-6 lg:px-8">
+    
+    <!-- En-tête avec titre de la page -->
+    <div class="bg-white rounded-xl shadow-sm overflow-hidden mb-6 p-6">
+      <h1 class="text-xl md:text-2xl font-bold text-gray-800 flex items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-[#00829B]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+        </svg>
+        Créer un groupe pour l'événement
+      </h1>
+      <p class="text-gray-600 mt-2 md:w-3/4">
+        Créez un groupe pour cet événement et invitez d'autres participants à se joindre à vous. Vous pourrez communiquer ensemble et organiser votre participation.
+      </p>
+    </div>
+    
+    <!-- Layout principal en deux colonnes -->
+    <div class="flex flex-col lg:flex-row gap-6">
+      <!-- Colonne gauche - Formulaire -->
+      <div class="w-full lg:w-1/2 space-y-6">
+        <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+          <div class="p-6">
+            <h2 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-[#00829B]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+              </svg>
+              Informations du groupe
+            </h2>
+            
+            <form [formGroup]="groupForm" (ngSubmit)="createGroup()">
+              <!-- Informations générales -->
+              <div class="space-y-6">
+                <div class="bg-gray-50 rounded-xl p-5 border border-gray-100">
+                  <h3 class="font-medium text-gray-800 mb-3 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 text-[#00829B]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Informations générales
+                  </h3>
+                  
+                  <div class="space-y-4">
+                    <!-- Nom du groupe -->
+                    <div>
+                      <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Nom du groupe</label>
+                      <input type="text" id="name" formControlName="name" 
+                             class="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#00829B] focus:border-transparent transition-colors"
+                             placeholder="Ex: Les amis de la montagne">
+                      <div *ngIf="groupForm.get('name')?.touched && groupForm.get('name')?.invalid"
+                           class="mt-1 text-sm text-red-600">
+                        <div *ngIf="groupForm.get('name')?.hasError('required')">Le nom du groupe est requis</div>
+                        <div *ngIf="groupForm.get('name')?.hasError('minlength')">Le nom doit contenir au moins 5 caractères</div>
+                      </div>
+                    </div>
+                    
+                    <!-- Description -->
+                    <div>
+                      <label for="description" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                      <textarea id="description" formControlName="description" rows="4"
+                                class="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#00829B] focus:border-transparent transition-colors resize-none"
+                                placeholder="Décrivez votre groupe et vos attentes"></textarea>
+                      <div *ngIf="groupForm.get('description')?.touched && groupForm.get('description')?.invalid"
+                           class="mt-1 text-sm text-red-600">
+                        <div *ngIf="groupForm.get('description')?.hasError('required')">La description est requise</div>
+                        <div *ngIf="groupForm.get('description')?.hasError('minlength')">La description doit contenir au moins 10 caractères</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Invitations personnalisées -->
+                <div class="bg-gray-50 rounded-xl p-5 border border-gray-100 relative">
+                  <h3 class="font-medium text-gray-800 mb-3 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 text-[#00829B]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                    Invitations personnalisées
+                  </h3>
+                  <p class="text-sm text-gray-600 mb-4">Invitez des personnes spécifiques à rejoindre votre groupe. Elles recevront une notification.</p>
+                  
+                  <!-- Utilisateurs sélectionnés -->
+                  <div *ngIf="selectedUsers.length > 0" class="flex flex-wrap gap-2 mb-4">
+                    <div *ngFor="let user of selectedUsers" 
+                         class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-[#00829B]/10 text-[#00829B]">
+                      {{ user }}
+                      <button type="button" (click)="removeUser(user)" 
+                              class="ml-1.5 text-[#00829B] hover:text-red-500 focus:outline-none">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                  
+                  <!-- Recherche d'utilisateurs -->
+                  <div>
+                    <label for="userSearch" class="block text-sm font-medium text-gray-700 mb-1">Rechercher un utilisateur</label>
+                    <div class="relative">
+                      <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                      </div>
+                      <input type="text" id="userSearch" formControlName="userSearch"
+                             class="w-full pl-10 pr-3 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#00829B] focus:border-transparent transition-colors"
+                             placeholder="Rechercher par pseudo"
+                             (ngModelChange)="onUserSearch()"
+                             autocomplete="off">
+                    </div>
+                    
+                    <!-- Résultats de recherche -->
+                    <div *ngIf="filteredUsers.length > 0" 
+                         class="absolute z-10 mt-1 w-full bg-white shadow-lg rounded-lg border border-gray-200 max-h-60 overflow-y-auto">
+                      <ul class="py-1">
+                        <li *ngFor="let user of filteredUsers" 
+                            (click)="selectUser(user)"
+                            class="px-4 py-2 hover:bg-gray-100 cursor-pointer flex items-center">
+                          <div class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center text-gray-600 mr-3">
+                            {{ user.charAt(0).toUpperCase() }}
+                          </div>
+                          <span>&#64;{{ user }}</span>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Visibilité du groupe -->
+                <div class="bg-gray-50 rounded-xl p-5 border border-gray-100">
+                  <h3 class="font-medium text-gray-800 mb-3 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 text-[#00829B]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                    Visibilité du groupe
+                  </h3>
+                  
+                  <div class="space-y-4">
+                    <p class="text-sm text-gray-600">
+                      Ce paramètre détermine qui peut rejoindre votre groupe.
+                    </p>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                      <!-- Option Public -->
+                      <label class="relative flex cursor-pointer">
+                        <input type="radio" formControlName="visibility" value="public" class="sr-only">
+                        <div class="p-4 border border-gray-200 rounded-lg flex flex-col h-full peer-checked:border-[#00829B] peer-checked:border-2 hover:bg-gray-50">
+                          <div class="flex items-start">
+                            <div class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-green-600 mr-3">
+                              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                              </svg>
+                            </div>
+                            <div>
+                              <span class="text-sm font-medium text-gray-900">Public</span>
+                              <p class="text-xs text-gray-500 mt-1">Tout le monde peut rejoindre votre groupe</p>
+                            </div>
+                          </div>
+                        </div>
+                      </label>
+                      
+                      <!-- Option Privé -->
+                      <label class="relative flex cursor-pointer">
+                        <input type="radio" formControlName="visibility" value="private" class="sr-only peer">
+                        <div class="p-4 border border-gray-200 rounded-lg flex flex-col h-full peer-checked:border-[#00829B] peer-checked:border-2 hover:bg-gray-50">
+                          <div class="flex items-start">
+                            <div class="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center text-red-600 mr-3">
+                              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                              </svg>
+                            </div>
+                            <div>
+                              <span class="text-sm font-medium text-gray-900">Privé</span>
+                              <p class="text-xs text-gray-500 mt-1">Uniquement les personnes invitées peuvent rejoindre</p>
+                            </div>
+                          </div>
+                        </div>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Boutons d'action -->
+                <div class="flex flex-col sm:flex-row gap-3">
+                  <button type="button" (click)="cancelGroupCreation()"
+                          class="py-3 px-4 inline-flex justify-center items-center gap-2 rounded-lg border border-transparent font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-all text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                    Annuler
+                  </button>
+                  
+                  <button type="submit"
+                          class="flex-1 py-3 px-4 inline-flex justify-center items-center gap-2 rounded-lg border border-transparent font-medium bg-[#00829B] text-white hover:bg-[#006d82] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#00829B] transition-all text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                    </svg>
+                    Créer le groupe
+                  </button>
                 </div>
               </div>
-            </div>
-            <div class="w-full p-4">
-              <label for="description" class="block text-gray-700 mb-1">Description</label>
-              <textarea id="description" formControlName="description"
-                class="w-full border border-gray-300 p-2 rounded-md resize-none" rows="4"
-                placeholder="Description de l'événement"></textarea>
-              <div *ngIf="groupForm.get('description')?.touched && groupForm.get('description')?.invalid"
-                class="text-red-500 text-sm">
-                <div *ngIf="groupForm.get('description')?.hasError('required')">La description est requise.</div>
-                <div *ngIf="groupForm.get('description')?.hasError('minlength')">La description doit comporter au moins
-                  10
-                  caractères.</div>
-              </div>
-            </div>
+            </form>
           </div>
-
-          <div class="mb-6 rounded-lg border border-gray-300 relative">
-            <p class="text-gray-700 p-4 font-bold">Invitations personnalisées</p>
-            <p class="text-sm p-4 pt-0 text-blue-700">Vous pouvez inviter des utilisateurs spécifiques à votre
-              événement.</p>
-
-            <div *ngIf="selectedUsers.length > 0" class="flex flex-wrap gap-2 mb-4 px-4">
-              <span *ngFor="let user of selectedUsers"
-                class="bg-indigo-100 text-indigo-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-indigo-900 dark:text-indigo-300 flex items-center">
-                {{ user }}
-                <button type="button" (click)="removeUser(user)" class="ml-2 text-red-400 hover:text-red-600">
-                  &times;
-                </button>
-              </span>
-            </div>
-
-            <div class="w-full p-4">
-              <label for="userSearch" class="block text-gray-700 mb-1">Recherche d'un utilisateur</label>
-              <input type="text" id="userSearch" formControlName="userSearch"
-                class="w-full border border-gray-300 p-2 rounded-md"
-                placeholder="Pseudo de l'utilisateur" (ngModelChange)="onUserSearch()"
-                autocomplete="off">
-
-              <div *ngIf="filteredUsers.length > 0" class="absolute bg-white border border-gray-300 mt-2 rounded-lg w-full z-10">
-                <ul class="list-none p-0 m-0">
-                  <li *ngFor="let user of filteredUsers" (click)="selectUser(user)"
-                    class="cursor-pointer p-2 hover:bg-gray-100">
-                    &#64;{{ user }}
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-
-          <div class="mb-6 rounded-lg border border-gray-300">
-            <p class="text-gray-700 p-4 font-bold">Visibilité du groupe</p>
-            <p class="text-sm p-4 pt-0 text-blue-700">Ce paramètre détermine si votre groupe est
-              joignable ou non par les autres utilisateurs.<br>
-              <strong>S'il est privé, seuls les utilisateurs que vous avez invité pourront rejoindre le groupe.</strong>
-            </p>
-            <div class="flex items-center p-4 pt-0">
-              <div class="w-full">
-                <select id="visibility" formControlName="visibility"
-                  class="w-full border border-gray-300 p-2 rounded-md">
-                  <option value="public" selected>Public</option>
-                  <option value="private">Privé</option>
-                </select>
-                <div *ngIf="groupForm.get('visibility')?.touched && groupForm.get('visibility')?.invalid"
-                  class="text-red-500 text-sm mt-2">
-                  <div *ngIf="groupForm.get('visibility')?.hasError('required')">La visibilité est requise.</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="flex flex-col space-y-3 md:flex-row md:space-x-3 md:space-y-0">
-            <button type="button" (click)="cancelGroupCreation()"
-              class="w-full text-white block rounded-lg text-center font-medium leading-6 px-6 py-3 bg-red-600 hover:bg-red-700 transition duration-150">
-              Annuler
-            </button>
-            <button type="submit"
-              class="w-full text-white block rounded-lg text-center font-medium leading-6 px-6 py-3 border-2 border-transparent bg-[#00829B] hover:text-[#00829B] hover:bg-transparent hover:border-[#00829B] transition duration-150">
-              Créer un groupe
-            </button>
-          </div>
-        </form>
+        </div>
       </div>
-
-      <div class="block bg-white shadow rounded-lg w-full lg:w-1/2 p-6">
-        <h3 class="font-semibold text-lg text-gray-900 mb-10">Informations de l'événement</h3>
-        <div *ngIf="isLoading" class="flex justify-center items-center h-64">
-          <div class="lds-dual-ring"></div>
-        </div>
-
-        <div *ngIf="!isLoading" class="flex justify-center mb-4">
-          <img [src]="formatImageUrl(event.image)" alt="Event image"
-            class="w-full h-64 object-cover rounded-md shadow-md border-white transition duration-200 transform hover:scale-105 hover:cursor-pointer">
-        </div>
-
-        <div *ngIf="!isLoading" class="mt-10">
-          <h1 class="font-semibold text-2xl text-gray-900 my-4">{{ event.title }}</h1>
-          <p class="text-gray-700 mb-4">{{ event.description }}</p>
-
-          <div class="flex flex-col md:flex-row md:justify-between gap-4 mt-6 pt-4">
-            <div class="bg-white w-full shadow rounded-lg p-6 flex-1">
-              <h3 class="font-semibold text-lg text-gray-900 mb-2">Dates</h3>
-              <label for="startDate" class="text-gray-600 block mb-1">Début</label>
-              <input type="text" id="startDate" [value]="event.dates.start | date: 'dd MMMM yyyy, HH:mm'" 
-                     class="w-full border border-gray-300 p-2 rounded-md mb-3" disabled>
-
-              <label for="endDate" class="text-gray-600 block mb-1">Fin</label>
-              <input type="text" id="endDate" [value]="event.dates.end | date: 'dd MMMM yyyy, HH:mm'" 
-                     class="w-full border border-gray-300 p-2 rounded-md" disabled>
-            </div>
-            <div class="bg-white w-full shadow rounded-lg p-6 flex-1">
-              <h3 class="font-semibold text-lg text-gray-900 mb-2">Localisation</h3>
-              <p class="text-gray-600">{{ event.location.name }}</p>
-              <p class="text-gray-600">{{ event.location.address }}, <strong>{{ event.location.city }}</strong></p>
-
-              <button 
-                (click)="openMaps(event.location.coordinates[0], event.location.coordinates[1])"
-                class="mt-4 border-2 border-transparent bg-blue-500 hover:bg-blue-600 text-white text-sm font-semibold py-2 px-4 rounded-xl">
-                Comment s'y rendre
-              </button>
-            </div>
-          </div>
-
-          <div *ngIf="weather && !isLoading" class="bg-blue-50 w-full shadow rounded-lg p-6 mt-4">
-            <p class="text-gray-600">Pour vous donner une idée de la météo le jour de l'événement.</p>
-            <div class="flex flex-col lg:flex-row lg:justify-between items-center mt-4">
-              <div class="flex flex-col lg:flex-row items-center gap-4 w-full">
-                <img [src]="getWeatherIcon(weather.day.condition.icon)" alt="Weather icon" class="w-16 h-16">
-                <div>
-                  <h3 class="font-semibold text-lg text-gray-900">Météo du jour <br>à {{ event.location.city }}</h3>
-                  <p class="text-gray-600">{{ weather.day.condition.text }}</p>
-                </div>
-              </div>
-              <div class="mt-4 lg:mt-0 text-gray-600 flex flex-col items-center w-full">
-                <div>
-                  <p><strong>Température : </strong>{{ weather.day.avgtemp_c }} °C</p>
-                  <p><strong>Humidité : </strong>{{ weather.day.avghumidity }}%</p>
-                  <p><strong>Vent : </strong>{{ weather.day.maxwind_kph }} km/h</p>
-                  <p><strong>Lever du soleil : </strong>{{ weather.astro.sunrise }}</p>
-                  <p><strong>Coucher du soleil : </strong>{{ weather.astro.sunset }}</p>
-                </div>
+      
+      <!-- Colonne droite - Informations sur l'événement -->
+      <div class="w-full lg:w-1/2">
+        <div class="bg-white rounded-xl shadow-sm overflow-hidden sticky top-6">
+          <div class="p-6">
+            <h2 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-[#00829B]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              Informations sur l'événement
+            </h2>
+            
+            <!-- Chargement -->
+            <div *ngIf="isLoading" class="flex justify-center items-center py-20">
+              <div class="flex items-center space-x-3">
+                <div class="w-4 h-4 rounded-full animate-pulse bg-[#00829B]"></div>
+                <div class="w-4 h-4 rounded-full animate-pulse bg-[#00829B] delay-75"></div>
+                <div class="w-4 h-4 rounded-full animate-pulse bg-[#00829B] delay-150"></div>
               </div>
             </div>
+            
+            <!-- Contenu -->
+            <div *ngIf="!isLoading">
+              <!-- Image de l'événement -->
+              <div class="relative rounded-lg overflow-hidden mb-5">
+                <img [src]="formatImageUrl(event.image)" alt="{{ event.title }}"
+                     class="w-full h-48 md:h-64 object-cover transition-transform duration-500 hover:scale-105">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent pointer-events-none"></div>
+              </div>
+              
+              <!-- Titre et description -->
+              <h3 class="text-xl font-bold text-gray-800 mb-3">{{ event.title }}</h3>
+              <p class="text-gray-600 mb-6 text-sm">{{ event.description }}</p>
+              
+              <!-- Informations détaillées -->
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
+                <!-- Dates -->
+                <div class="bg-gray-50 rounded-lg p-4">
+                  <h4 class="text-sm font-medium text-gray-800 mb-3 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 text-[#00829B]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    Dates
+                  </h4>
+                  
+                  <div class="space-y-3">
+                    <div>
+                      <div class="text-xs text-gray-500">Début</div>
+                      <div class="font-medium text-sm">{{ event.dates.start ? (event.dates.start | date: 'EEEE dd MMMM yyyy') : 'Date non disponible' }}</div>
+                    </div>
+                    
+                    <div>
+                      <div class="text-xs text-gray-500">Fin</div>
+                      <div class="font-medium text-sm">{{ event.dates.end ? (event.dates.start | date: 'EEEE dd MMMM yyyy') : 'Date non disponible' }}</div>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Localisation -->
+                <div class="bg-gray-50 rounded-lg p-4">
+                  <h4 class="text-sm font-medium text-gray-800 mb-3 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 text-[#00829B]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    Lieu
+                  </h4>
+                  
+                  <div class="mb-3">
+                    <div class="font-medium text-sm">{{ event.location.name }}</div>
+                    <div class="text-xs text-gray-600">{{ event.location.address }}</div>
+                    <div class="font-semibold text-sm text-[#00829B]">{{ event.location.city }}</div>
+                  </div>
+                  
+                  <button (click)="openMaps(event.location.coordinates[0], event.location.coordinates[1])"
+                          class="inline-flex items-center px-3 py-1.5 text-xs bg-[#00829B] text-white font-medium rounded-lg hover:bg-[#006d82] transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                    </svg>
+                    Comment s'y rendre
+                  </button>
+                </div>
+              </div>
+              
+              <div *ngIf="weather && weather.day?.condition" class="bg-gradient-to-r from-blue-50 to-sky-50 rounded-xl p-4 mb-5">
+                <h4 class="text-sm font-medium text-gray-800 mb-3 flex items-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 text-[#00829B]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
+                  </svg>
+                  Météo à {{ event.location.city }}
+                </h4>
+                
+                <div class="flex items-center space-x-4">
+                  <img *ngIf="weather.day.condition.icon" [src]="getWeatherIcon(weather.day.condition.icon)" alt="Météo" class="w-12 h-12">
+                  <div>
+                    <div class="font-medium text-sm">{{ weather.day.condition.text }}</div>
+                    <div class="text-xl font-bold text-gray-900">{{ weather.day.avgtemp_c }}°C</div>
+                  </div>
+                </div>
+                
+                <!-- Vérifier chaque propriété avant de l'afficher -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-3">
+                  <div *ngIf="weather.day.avghumidity !== undefined" class="bg-white bg-opacity-60 p-2 rounded-lg text-xs">
+                    <span class="text-gray-500">Humidité</span>
+                    <div class="font-medium">{{ weather.day.avghumidity }}%</div>
+                  </div>
+                  <div *ngIf="weather.day.maxwind_kph !== undefined" class="bg-white bg-opacity-60 p-2 rounded-lg text-xs">
+                    <span class="text-gray-500">Vent</span>
+                    <div class="font-medium">{{ weather.day.maxwind_kph }} km/h</div>
+                  </div>
+                  <div *ngIf="weather.astro?.sunrise" class="bg-white bg-opacity-60 p-2 rounded-lg text-xs">
+                    <span class="text-gray-500">Lever du soleil</span>
+                    <div class="font-medium">{{ weather.astro.sunrise }}</div>
+                  </div>
+                  <div *ngIf="weather.astro?.sunset" class="bg-white bg-opacity-60 p-2 rounded-lg text-xs">
+                    <span class="text-gray-500">Coucher</span>
+                    <div class="font-medium">{{ weather.astro.sunset }}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-
-        <div class="mt-6">
-          <div id="map" class="w-full h-96 rounded-lg"></div>
         </div>
       </div>
     </div>

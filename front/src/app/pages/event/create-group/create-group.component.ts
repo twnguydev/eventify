@@ -29,9 +29,10 @@ export class CreateGroupComponent implements OnInit {
   isLoading: boolean = true;
   event: IEvent = {} as IEvent;
   groupForm: FormGroup;
-  map!: L.Map;
-  locationMarker!: L.Marker;
-  weather: any = {};
+  map: L.Map | null = null;
+  locationMarker: L.Marker | null = null;
+  weather: any = null;
+  mapInitialized: boolean = false;
 
   allUsers: any[] = [];
   filteredUsers: any[] = [];
@@ -50,7 +51,7 @@ export class CreateGroupComponent implements OnInit {
     this.groupForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(5)]],
       description: ['', [Validators.required, Validators.minLength(10)]],
-      visibility: ['public', Validators.required],
+      visibility: ['', Validators.required],
       userSearch: ['']
     });
   }
@@ -71,10 +72,14 @@ export class CreateGroupComponent implements OnInit {
             return;
           }
           this.event = event.event;
-          setTimeout(() => this.isLoading = false, 1000);
-          this.initializeMap();
-          this.loadEventMap();
-          this.loadWeatherDetails();
+          
+          // S'assurer que la carte est initialisée avant de l'utiliser
+          setTimeout(() => {
+            this.isLoading = false;
+            this.initializeMap();
+            this.loadEventMap();
+            this.loadWeatherDetails();
+          }, 500);
         },
         error: (error: HttpErrorResponse) => {
           if (error.status === 500) {
@@ -82,14 +87,14 @@ export class CreateGroupComponent implements OnInit {
           } else {
             console.error('Erreur lors du chargement des détails de l\'événement', error);
           }
-          setTimeout(() => this.isLoading = false, 1000);
+          setTimeout(() => this.isLoading = false, 500);
         }
       });
     });
   }
 
   loadEventMap(): void {
-    if (this.event.location.coordinates) {
+    if (this.event.location?.coordinates && this.mapInitialized && this.map) {
       this.updateMapMarker(this.event.location.coordinates);
     }
   }
@@ -108,6 +113,8 @@ export class CreateGroupComponent implements OnInit {
   }
 
   updateMapMarker(coords: number[]): void {
+    if (!this.map) return;
+    
     const locationIcon = L.divIcon({
       html: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" width="30" height="30">
               <path fill="black" d="M215.7 499.2C267 435 384 279.4 384 192C384 86 298 0 192 0S0 86 0 192c0 87.4 117 243 168.3 307.2c12.3 15.3 35.1 15.3 47.4 0zM192 128a64 64 0 1 1 0 128 64 64 0 1 1 0-128z"/>
@@ -115,6 +122,11 @@ export class CreateGroupComponent implements OnInit {
       className: '',
       iconSize: [30, 30]
     });
+
+    // Supprimer le marqueur existant s'il existe
+    if (this.locationMarker) {
+      this.map.removeLayer(this.locationMarker);
+    }
 
     this.locationMarker = L.marker([coords[0], coords[1]], { icon: locationIcon }).addTo(this.map);
     this.locationMarker.bindPopup(`
@@ -127,13 +139,42 @@ export class CreateGroupComponent implements OnInit {
   }
 
   initializeMap(): void {
-    if (document.getElementById('map') && this.event.location.coordinates) {
-      const coordinates: L.LatLngExpression = [this.event.location.coordinates[0], this.event.location.coordinates[1]];
-      this.map = L.map('map', { zoomControl: false }).setView(coordinates, 13);
-
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap contributors'
-      }).addTo(this.map);
+    if (!this.mapInitialized && this.event?.location?.coordinates) {
+      const mapElement = document.getElementById('map');
+      
+      if (mapElement) {
+        const coordinates: L.LatLngExpression = [this.event.location.coordinates[0], this.event.location.coordinates[1]];
+        
+        try {
+          // Vérifier si Leaflet a déjà initialisé une carte sur cet élément
+          if ((mapElement as any)._leaflet_id) {
+            console.log("Une carte existe déjà, nettoyage...");
+            this.map = null;
+            mapElement.innerHTML = '';
+          }
+          
+          this.map = L.map('map', { zoomControl: false }).setView(coordinates, 13);
+          
+          L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+            subdomains: 'abcd',
+            maxZoom: 19
+          }).addTo(this.map);
+          
+          this.mapInitialized = true;
+          console.log("Map successfully initialized");
+          
+          // Force un recalcul de taille après initialisation
+          setTimeout(() => {
+            if (this.map) {
+              this.map.invalidateSize();
+            }
+          }, 100);
+        } catch (error) {
+          console.error("Error initializing map:", error);
+        }
+      } else {
+        console.warn("Map element not found in the DOM");
+      }
     }
   }
 
@@ -166,15 +207,25 @@ export class CreateGroupComponent implements OnInit {
   }
 
   loadWeatherDetails(): void {
-    if (this.event.location.coordinates) {
-      this.weatherService.fetchWeather(this.event.location.coordinates[0], this.event.location.coordinates[1])
-        .subscribe(weather => {
-          this.weather = weather.forecast[0];
-        });
+    if (this.event.location?.coordinates) {
+      this.weatherService.fetchWeather(this.event.location.coordinates[0], this.event.location.coordinates[1]).subscribe({
+        next: (weather) => {
+          if (weather && weather.forecast && weather.forecast.length > 0) {
+            this.weather = weather.forecast[0];
+            console.log("Weather data loaded successfully", this.weather);
+          } else {
+            console.warn("Weather data format is unexpected or empty");
+          }
+        },
+        error: (error) => {
+          console.error("Error fetching weather data:", error);
+        }
+      });
     }
   }
 
   getWeatherIcon(iconPath: string): string {
+    if (!iconPath) return '';
     return `https:${iconPath}`;
   }
 
@@ -184,6 +235,7 @@ export class CreateGroupComponent implements OnInit {
   }
 
   formatImageUrl(image: string): string {
+    if (!image) return '';
     if (typeof image !== 'string') return '';
     if (image.includes('http')) {
       return image;
@@ -213,17 +265,17 @@ export class CreateGroupComponent implements OnInit {
         };
       }
 
-      this.groupService.createGroup(this.slug, data).subscribe(
-        (response) => {
+      this.groupService.createGroup(this.slug, data).subscribe({
+        next: (response) => {
           this.router.navigate([`/event/${this.slug}`]);
         },
-        (error) => {
+        error: (error) => {
           console.error('Erreur lors de la création du groupe', error);
         }
-      );
+      });
     } else {
       console.log('Formulaire invalide');
-      console.table('Valeurs: ', this.groupForm.value);
+      console.log('Valeurs: ', this.groupForm.value);
     }
   }
 

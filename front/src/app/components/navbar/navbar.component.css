@@ -1,0 +1,138 @@
+/* Styles pour la navbar */
+:host {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  width: 100%;
+}
+
+/* Animation pour le badge BETA */
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.6; }
+  100% { opacity: 1; }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Animation pour le menu mobile */
+.fixed.inset-y-0.right-0 {
+  transition: transform 0.3s ease-in-out;
+  box-shadow: -5px 0 25px rgba(0, 0, 0, 0.1);
+}
+
+.translate-x-full {
+  transform: translateX(100%);
+}
+
+.translate-x-0 {
+  transform: translateX(0);
+}
+
+/* Animation pour le menu burger */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.navbar-menu.block {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Effet de transition pour les boutons */
+button, a {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Élévation subtile pour la navbar */
+nav {
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+/* Animation des icônes dans les liens */
+a:hover svg {
+  transform: scale(1.1);
+  transition: transform 0.2s ease;
+}
+
+/* Style de surbrillance pour l'élément actif */
+a.bg-\[\#00829B\] {
+  position: relative;
+  overflow: hidden;
+}
+
+a.bg-\[\#00829B\]::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 2px;
+  background-color: white;
+  transition: width 0.3s ease;
+}
+
+a.bg-\[\#00829B\]:hover::after {
+  width: 80%;
+}
+
+/* Effet de rafraîchissement pour les éléments actifs */
+@keyframes activeHighlight {
+  0% { background-color: rgba(0, 130, 155, 0.7); }
+  50% { background-color: rgba(0, 130, 155, 1); }
+  100% { background-color: rgba(0, 130, 155, 0.7); }
+}
+
+nav a.bg-\[\#00829B\]:active {
+  animation: activeHighlight 0.3s ease;
+}
+
+/* Animation d'apparition du dropdown */
+.group-hover\:opacity-100 {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Effet de surbrillance pour les liens du dropdown */
+.group-hover\:opacity-100 a:hover {
+  background-color: rgba(0, 130, 155, 0.05);
+}
+
+/* Style pour le menu déroulant */
+.group:hover .group-hover\:translate-y-0 {
+  transform: translateY(0);
+}
+
+/* Amélioration de l'apparence des menus au survol */
+.hover\:bg-gray-100:hover {
+  background-color: rgba(243, 244, 246, 0.7);
+}
+
+/* Amélioration de l'accessibilité - focus visible */
+a:focus, button:focus {
+  outline: 2px solid rgba(0, 130, 155, 0.5);
+  outline-offset: 2px;
+}
+
+/* Animation du bouton de fermeture */
+.navbar-close:hover svg {
+  transform: rotate(90deg);
+  transition: transform 0.3s ease;
+}
+
+/* Rendu plus fluide des transitions */
+* {
+  backface-visibility: hidden;
+}
+
+/* Support pour les préférences de réduction de mouvement */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

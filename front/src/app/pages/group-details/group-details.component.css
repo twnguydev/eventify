@@ -1,62 +1,116 @@
-.lds-dual-ring,
-.lds-dual-ring:after {
-  box-sizing: border-box;
+/* Styles CSS pour la page de groupe */
+
+/* Animations pour les messages */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-.lds-dual-ring {
-  display: inline-block;
-  width: 80px;
-  height: 80px;
+.flex.justify-start, .flex.justify-end {
+  animation: fadeIn 0.3s ease-out;
 }
 
-.lds-dual-ring:after {
-  content: " ";
-  display: block;
-  width: 64px;
-  height: 64px;
-  margin: 8px;
-  border-radius: 50%;
-  border: 6.4px solid currentColor;
-  border-color: currentColor transparent currentColor transparent;
-  animation: lds-dual-ring 1.2s linear infinite;
+/* Styles pour le chat */
+.overflow-y-auto {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 130, 155, 0.3) rgba(243, 244, 246, 0.5);
 }
 
-@keyframes lds-dual-ring {
-  0% {
-    transform: rotate(0deg);
+.overflow-y-auto::-webkit-scrollbar {
+  width: 6px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-track {
+  background: rgba(243, 244, 246, 0.5);
+  border-radius: 8px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 130, 155, 0.3);
+  border-radius: 8px;
+  border: 2px solid transparent;
+}
+
+/* Animation pour la bulle de message en cours de frappe */
+@keyframes typingPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.animate-typing {
+  animation: typingPulse 1.5s infinite;
+}
+
+/* Effet de profondeur pour les cartes */
+.shadow-sm {
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.shadow-sm:hover {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* Effet de pulse pour les boutons d'action */
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(0, 130, 155, 0.4); }
+  70% { box-shadow: 0 0 0 10px rgba(0, 130, 155, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(0, 130, 155, 0); }
+}
+
+.bg-\[\#00829B\]:hover {
+  animation: pulse 1.5s infinite;
+}
+
+/* Effet de surbrillance pour l'avatar de l'organisateur */
+@keyframes glowPulse {
+  0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+  70% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+
+.text-emerald-600 ~ img {
+  animation: glowPulse 2s infinite;
+}
+
+/* Transitions pour les images */
+img.hover\:scale-105 {
+  transition: transform 0.5s ease;
+}
+
+/* Effet de carte météo */
+.from-blue-50.to-sky-50 {
+  background-size: 200% 200%;
+  animation: gradientShift 8s ease infinite;
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Responsive design improvements */
+@media (max-width: 640px) {
+  .grid-cols-1.sm\:grid-cols-2 {
+    grid-template-columns: 1fr;
   }
-  100% {
-    transform: rotate(360deg);
+  
+  .max-w-\[85\%\] {
+    max-width: 90%;
+  }
+  
+  .p-6 {
+    padding: 1rem;
   }
 }
-.lds-dual-ring,
-.lds-dual-ring:after {
-  box-sizing: border-box;
-}
 
-.lds-dual-ring {
-  display: inline-block;
-  width: 80px;
-  height: 80px;
-}
-
-.lds-dual-ring:after {
-  content: " ";
-  display: block;
-  width: 64px;
-  height: 64px;
-  margin: 8px;
-  border-radius: 50%;
-  border: 6.4px solid currentColor;
-  border-color: currentColor transparent currentColor transparent;
-  animation: lds-dual-ring 1.2s linear infinite;
-}
-
-@keyframes lds-dual-ring {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
+/* Accessibilité améliorée */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

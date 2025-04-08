@@ -1,27 +1,25 @@
-#map {
-  height: 100%;
+/* Styles pour la page d'événements */
+:host {
+  display: block;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
-.lds-dual-ring,
-.lds-dual-ring:after {
-  box-sizing: border-box;
-}
-
+/* Animation de chargement stylée */
 .lds-dual-ring {
   display: inline-block;
-  width: 80px;
-  height: 80px;
+  width: 64px;
+  height: 64px;
 }
 
 .lds-dual-ring:after {
   content: " ";
   display: block;
-  width: 64px;
-  height: 64px;
+  width: 48px;
+  height: 48px;
   margin: 8px;
   border-radius: 50%;
-  border: 6.4px solid currentColor;
-  border-color: currentColor transparent currentColor transparent;
+  border: 5px solid #00829B;
+  border-color: #00829B transparent #00829B transparent;
   animation: lds-dual-ring 1.2s linear infinite;
 }
 
@@ -31,5 +29,285 @@
   }
   100% {
     transform: rotate(360deg);
+  }
+}
+
+/* Animation pour les cartes d'événements */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+li {
+  animation: fadeIn 0.3s ease-out;
+  animation-fill-mode: backwards;
+}
+
+li:nth-child(1) { animation-delay: 0.05s; }
+li:nth-child(2) { animation-delay: 0.1s; }
+li:nth-child(3) { animation-delay: 0.15s; }
+li:nth-child(4) { animation-delay: 0.2s; }
+li:nth-child(5) { animation-delay: 0.25s; }
+li:nth-child(6) { animation-delay: 0.3s; }
+li:nth-child(7) { animation-delay: 0.35s; }
+li:nth-child(8) { animation-delay: 0.4s; }
+li:nth-child(9) { animation-delay: 0.45s; }
+li:nth-child(10) { animation-delay: 0.5s; }
+
+/* Effet de survol pour les cartes d'événements */
+li > div {
+  transition: all 0.2s ease-in-out;
+}
+
+li > div:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Styles pour le conteneur de carte */
+#map {
+  transition: all 0.3s ease;
+  z-index: 0;
+}
+
+/* Animation de pulsation */
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.05); opacity: 0.7; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.animate-pulse {
+  animation: pulse 1.5s ease infinite;
+}
+
+/* Animation de rebond */
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.animate-bounce {
+  animation: bounce 0.5s ease;
+}
+
+/* Animation de mise à l'échelle */
+.scale-98 {
+  transform: scale(0.98);
+}
+
+/* Animation d'apparition */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in-up {
+  animation: fadeInUp 0.5s ease forwards;
+}
+
+/* Limiter le texte à 2 lignes */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Personnalisation des contrôles Leaflet */
+:host ::ng-deep .leaflet-control-zoom {
+  border: none !important;
+  border-radius: 12px !important;
+  overflow: hidden;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1) !important;
+}
+
+:host ::ng-deep .leaflet-control-zoom-in,
+:host ::ng-deep .leaflet-control-zoom-out {
+  background-color: white !important;
+  color: #333 !important;
+  width: 32px !important;
+  height: 32px !important;
+  line-height: 30px !important;
+  font-size: 16px !important;
+  border-radius: 0 !important;
+  border: none !important;
+  transition: all 0.2s ease;
+}
+
+:host ::ng-deep .leaflet-control-zoom-in:hover,
+:host ::ng-deep .leaflet-control-zoom-out:hover {
+  background-color: #f5f5f5 !important;
+  color: #00829B !important;
+}
+
+:host ::ng-deep .leaflet-control-attribution {
+  background-color: rgba(255, 255, 255, 0.7) !important;
+  padding: 3px 8px !important;
+  border-radius: 8px !important;
+  backdrop-filter: blur(4px);
+  font-size: 10px !important;
+  color: #555 !important;
+}
+
+/* Styles pour les popups de carte */
+:host ::ng-deep .leaflet-popup {
+  margin-bottom: 20px;
+}
+
+:host ::ng-deep .leaflet-popup-close-button {
+  padding: 8px !important;
+  color: #999 !important;
+  transition: all 0.2s ease;
+}
+
+:host ::ng-deep .leaflet-popup-close-button:hover {
+  color: #333 !important;
+  background: none !important;
+}
+
+/* Styles pour les sélecteurs personnalisés */
+select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23a0aec0'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 20px;
+}
+
+/* Transitions douces pour les filtres */
+.transition-all {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
+}
+
+/* Animation pour le toggle des filtres avancés */
+.transition-transform {
+  transition-property: transform;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
+}
+
+.rotate-180 {
+  transform: rotate(180deg);
+}
+
+/* Scrollbar personnalisée pour le panneau latéral */
+.overflow-y-auto::-webkit-scrollbar {
+  width: 6px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 8px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 8px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb:hover {
+  background: #00829B;
+}
+
+/* Media queries pour le design responsive */
+@media (max-width: 1023px) {
+  .lg\:h-full {
+    height: 40vh !important;
+  }
+}
+
+/* Ajustements spécifiques pour la vue mobile */
+
+/* Assure que la carte occupe une hauteur définie sur mobile */
+@media (max-width: 1023px) {
+  /* Hauteur de la carte sur mobile */
+  .lg\:w-3\/5 {
+    height: 50vh !important; /* Hauteur fixe sur mobile */
+  }
+  
+  /* Ajustement pour la vue liste sur mobile */
+  .w-full.lg\:w-2\/5 {
+    height: calc(50vh - 70px) !important; /* Reste de la hauteur disponible */
+    max-height: 50vh;
+  }
+  
+  /* S'assurer que le conteneur principal est bien dimensionné */
+  .flex.flex-col.lg\:flex-row {
+    min-height: calc(100vh - 70px);
+    height: auto;
+  }
+  
+  /* Meilleur positionnement du toggle sidebar sur mobile */
+  .bottom-4.right-4 {
+    bottom: 1rem;
+    right: 1rem;
+  }
+  
+  /* Badge d'événements plus visible sur mobile */
+  .absolute.bottom-4.left-4 {
+    bottom: 1rem;
+    left: 1rem;
+  }
+}
+
+/* Style pour la transition entre la vue mobile et desktop */
+.hidden.lg\:block, .block {
+  transition: opacity 0.3s ease-in-out;
+}
+
+/* Amélioration du style des sélecteurs sur mobile */
+@media (max-width: 767px) {
+  select {
+    background-position: right 0.75rem center;
+    background-size: 1rem;
+  }
+}
+
+/* Amélioration de l'interface utilisateur mobile */
+@media (max-width: 639px) {
+  .top-4.left-0.right-0 {
+    top: 0.5rem;
+  }
+  
+  .w-11\/12 {
+    width: 95%;
+  }
+  
+  input, select {
+    font-size: 16px; /* Évite le zoom sur les formulaires mobiles */
+  }
+}
+
+@media (max-width: 1023px) {
+  /* Ajouter un padding pour éviter que le contenu soit caché sous la barre fixe */
+  .pb-16 {
+    padding-bottom: 4rem !important;
+  }
+  
+  /* Animation de transition pour le toggle */
+  .block, .hidden {
+    transition: opacity 0.3s ease;
+  }
+  
+  /* Améliorer l'apparence de la barre fixe */
+  .fixed.bottom-0 {
+    height: 60px;
+    backdrop-filter: blur(8px);
   }
 }

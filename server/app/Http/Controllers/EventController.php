@@ -450,15 +450,17 @@ class EventController extends Controller
 
         $groupDetails = [];
         foreach ($groups as $group) {
-            $participants = DB::table('user_groups')
-                ->where('group_id', $group->id)
-                ->join('users', 'user_groups.user_id', '=', 'users.id')
-                ->join('groups', 'groups.id', '=', 'user_groups.group_id')
-                ->join('rooms', 'rooms.id_group', '=', 'user_groups.group_id')
-                ->join('room_user', 'room_user.room_id', '=', 'rooms.id')
-                ->select('users.id', 'users.pseudo', 'room_user.is_creator')
-                ->get()
-                ->unique('id');
+            $room = Room::where('id_group', $group->id)->first();
+            
+            $participants = DB::table('room_user')
+            ->where('room_user.room_id', $room->id)
+            ->join('users', 'room_user.user_id', '=', 'users.id')
+            ->select('users.id', 'users.pseudo', 'room_user.is_creator')
+            ->get()
+            ->map(function ($p) {
+                $p->is_creator = (int) $p->is_creator;
+                return $p;
+            });
 
             $groupDetails[] = [
                 'group' => [
@@ -466,7 +468,7 @@ class EventController extends Controller
                     'title' => $group->title,
                     'description' => $group->description,
                     'visibility' => $group->visibility,
-                    'creator' => $participants->where('is_creator', true)->first(),
+                    'creator' => $participants->where('is_creator', 1)->first(),
                     'participants' => $participants
                 ]
             ];

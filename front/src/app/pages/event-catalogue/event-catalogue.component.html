@@ -1,74 +1,186 @@
 <app-navbar activePage="discover-events"></app-navbar>
 
-<div class="flex" style="height: calc(100vh - 70px)">
-  <div *ngIf="isMapLoading" class="w-3/5 h-full fixed top-70 bg-gray-500 bg-opacity-50 flex justify-center items-center" style="z-index: 9999;">
-    <div class="inline-block w-16 h-16">
-      <div class="lds-dual-ring"></div>
+<!-- Conteneur principal avec ajustement de hauteur pour mobile -->
+<div class="flex flex-col lg:flex-row h-[calc(100vh-70px-40px)] lg:h-[calc(100vh-70px-40px)] bg-slate-50 relative">
+  <!-- Loading Overlay -->
+  <div *ngIf="isMapLoading" class="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-50">
+    <div class="bg-white rounded-xl p-6 shadow-xl flex items-center space-x-4">
+      <div class="animate-pulse">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-[#00829B]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+        </svg>
+      </div>
+      <span class="text-gray-800 font-medium">Chargement de la carte...</span>
     </div>
   </div>
 
-  <div id="map" class="w-3/5 h-full"></div>
-
-  <div class="w-2/5 bg-gray-100 p-6 overflow-y-auto text-gray-800">
-    <div class="mb-6">
-      <h2 class="text-2xl font-bold mb-4">Filtres</h2>
-      <input [(ngModel)]="cityName" (ngModelChange)="onCityNameChange()"
-        class="block w-full mb-2 text-left p-3 bg-gray-200 rounded-md hover:bg-gray-300" type="text"
-        placeholder="Ville" />
-      <input [(ngModel)]="eventName" (ngModelChange)="onEventNameChange()"
-        class="block w-full mb-2 text-left p-3 bg-gray-200 rounded-md hover:bg-gray-300" type="text"
-        placeholder="Nom de l'événement" />
-      <div class="flex flex-col md:flex-row md:space-x-2">
-        <select [(ngModel)]="sort" (ngModelChange)="onSortChange()"
-          class="block w-full mb-2 text-left p-3 bg-gray-200 rounded-md hover:bg-gray-300">
-          <option [ngValue]="null" disabled>Trier par</option>
-          <option value="date_asc">Date croissante</option>
-          <option value="date_desc">Date décroissante</option>
-        </select>
-        <select [(ngModel)]="distance" (ngModelChange)="onDistanceChange()"
-          class="block w-full mb-2 text-left p-3 bg-gray-200 rounded-md hover:bg-gray-300">
-          <option [ngValue]="null" disabled>Distance</option>
-          <option value="distance_asc">Distance croissante</option>
-          <option value="distance_desc">Distance décroissante</option>
-        </select>
-        <select [(ngModel)]="limit" (ngModelChange)="onLimitChange()"
-          class="block w-full mb-2 text-left p-3 bg-gray-200 rounded-md hover:bg-gray-300">
-          <option [ngValue]="10">Affichage</option>
-          <option value="50">50</option>
-          <option value="100">100</option>
-          <option value="200">200</option>
-          <option value="500">Maximum</option>
-        </select>
-      </div>
-    </div>
-
-    <div>
-      <h2 class="text-2xl font-bold mb-4">Événements à venir</h2>
-      <div *ngIf="filteredEvents.length === 0" class="mt-10 w-50 space-y-4">
-        <h3 class="text-xl text-gray-500">Oh oh... 🥲</h3>
-        <p class="text-gray-400">Aucun événement ne correspond à vos critères de recherche.</p>
-        <p class="text-gray-400">Essayez de modifier vos filtres ou créez un événement pour que d'autres personnes puissent vous rejoindre !</p>
-        <a href="/organizer/new-event" class="inline-block text-center py-2 px-6 border-2 border-transparent bg-[#00829B] hover:text-[#00829B] hover:bg-transparent hover:border-[#00829B] text-sm text-white font-bold rounded-xl transition duration-200">Créer un événement</a>
-      </div>
-
-      <ul>
-        <li *ngFor="let event of filteredEvents" class="mb-4">
-          <div class="p-4 bg-white rounded-md shadow-md hover:bg-gray-50">
-            <time class="text-[#00829B] text-sm font-medium uppercase">{{ event.dates.start | utcDate:'dd/MM/yyyy, HH:mm a':true }} &mdash; {{ event.dates.end | utcDate:'dd/MM/yyyy, HH:mm a':true }}</time>
-            <h3 class="text-xl font-semibold my-2">{{ event.title }}</h3>
-            <p 
-              [ngClass]="{'text-green-600': event.distance !== undefined && event.distance < 10, 'text-yellow-600': event.distance !== undefined && event.distance >= 10 && event.distance < 50, 'text-red-600': event.distance !== undefined && event.distance >= 50}"
-              class="text-gray-600 my-3 uppercase font-semibold text-sm" 
-              *ngIf="event.distance !== undefined">
-              {{ event.distance | number: '1.0-2' }} km de vous
-            </p>
-            <span class="text-sm text-gray-500">{{ event.description | slice: 0:200 }}...</span>
-            <div class="flex flex-col md:flex-row md:items-center justify-between mt-2">
-              <a *ngIf="event.url" href="/event/{{ event.slug }}" class="inline-block text-center py-2 px-6 border-2 hover:border-transparent hover:bg-[#00829B] text-[#00829B] bg-transparent border-[#00829B] hover:text-white text-sm font-bold rounded-xl transition duration-200 mt-4">Plus d'informations</a>
+  <!-- Map Container -->
+  <div class="relative w-full lg:w-3/5 h-full">
+    <!-- Map -->
+    <div id="map" class="w-full h-[calc(100vh-70px-40px)] rounded-b-xl lg:rounded-none"></div>
+    
+    <!-- Floating Search Bar on Map -->
+    <div class="absolute top-4 left-0 right-0 mx-auto w-11/12 max-w-2xl z-20">
+      <div class="bg-white rounded-xl shadow-xl overflow-hidden">
+        <!-- Search Input -->
+        <div class="relative">
+          <input [(ngModel)]="cityName" (ngModelChange)="onCityNameChange()"
+            class="w-full p-4 pl-12 text-gray-700 bg-white border-0 focus:ring-2 focus:ring-[#00829B] focus:outline-none transition-all" 
+            type="text" placeholder="Rechercher une ville...">
+          <div class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
+          <button (click)="getUserLocation()" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-[#00829B] transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+          </button>
+        </div>
+        
+        <!-- Expandable Advanced Filters -->
+        <div class="overflow-hidden transition-all duration-300" [ngClass]="{'h-0': !showAdvancedFilters, 'h-auto p-4': showAdvancedFilters}">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div class="col-span-1 md:col-span-3">
+              <input [(ngModel)]="eventName" (ngModelChange)="onEventNameChange()"
+                class="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#00829B] focus:border-transparent transition-all" 
+                type="text" placeholder="Nom de l'événement">
+            </div>
+            <div>
+              <select [(ngModel)]="sort" (ngModelChange)="onSortChange()"
+                class="appearance-none w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#00829B] focus:border-transparent transition-all pr-8">
+                <option [ngValue]="null" disabled>Trier par date</option>
+                <option value="date_asc">Date ↑</option>
+                <option value="date_desc">Date ↓</option>
+              </select>
+            </div>
+            <div>
+              <select [(ngModel)]="distance" (ngModelChange)="onDistanceChange()"
+                class="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#00829B] focus:border-transparent transition-all appearance-none pr-8">
+                <option [ngValue]="null" disabled>Distance</option>
+                <option value="distance_asc">Distance ↑</option>
+                <option value="distance_desc">Distance ↓</option>
+              </select>
+            </div>
+            <div>
+              <select [(ngModel)]="limit" (ngModelChange)="onLimitChange()"
+                class="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#00829B] focus:border-transparent transition-all appearance-none pr-8">
+                <option [ngValue]="10">Afficher</option>
+                <option value="50">50 événements</option>
+                <option value="100">100 événements</option>
+                <option value="200">200 événements</option>
+                <option value="500">Maximum</option>
+              </select>
             </div>
           </div>
-        </li>
-      </ul>
+        </div>
+        
+        <!-- Toggle Button -->
+        <div class="flex justify-center border-t border-gray-100">
+          <button (click)="showAdvancedFilters = !showAdvancedFilters" class="w-full p-2 text-sm text-gray-500 hover:text-[#00829B] flex items-center justify-center space-x-1 transition-colors">
+            <span>Filtres avancés</span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transition-transform duration-300" 
+                 [ngClass]="{'rotate-180': showAdvancedFilters}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Badge de compteur d'événements (uniquement sur desktop) -->
+    <div class="hidden lg:block absolute bottom-4 left-4 z-20 bg-white bg-opacity-90 backdrop-blur-sm rounded-full px-4 py-2 shadow-lg">
+      <span class="text-sm font-medium">{{ filteredEvents.length }} événements trouvés</span>
     </div>
   </div>
+
+  <!-- Event List Sidebar -->
+  <div class="w-full lg:w-2/5 h-full pb-16 lg:pb-0 bg-white lg:bg-slate-50 lg:border-l border-gray-200 overflow-y-auto" [ngClass]="{'hidden lg:block': !showSidebar, 'block': showSidebar}">
+    <div class="p-6">
+      <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-[#00829B]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        </svg>
+        Événements à venir
+      </h2>
+
+      <!-- Empty State -->
+      <div *ngIf="filteredEvents.length === 0" class="py-12 flex flex-col items-center justify-center text-center">
+        <div class="w-24 h-24 mb-6 rounded-full bg-gray-100 flex items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+        </div>
+        <h3 class="text-xl font-medium text-gray-700 mb-2">Aucun événement trouvé</h3>
+        <p class="text-gray-500 mb-6 max-w-sm">Aucun événement ne correspond à vos critères de recherche. Essayez de modifier vos filtres ou créez votre propre événement !</p>
+        <a href="/organizer/new-event" class="inline-flex items-center px-6 py-3 bg-[#00829B] text-white font-medium rounded-xl shadow-lg hover:bg-[#006d82] transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+          </svg>
+          Créer un événement
+        </a>
+      </div>
+
+      <!-- Event Cards -->
+      <div class="space-y-4">
+        <div *ngFor="let event of filteredEvents" class="group relative bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden">
+          <!-- Distance badge -->
+          <div *ngIf="event.distance !== undefined" 
+               [ngClass]="{'bg-green-100 text-green-700': event.distance < 10, 'bg-yellow-100 text-yellow-700': event.distance >= 10 && event.distance < 50, 'bg-red-100 text-red-700': event.distance >= 50}"
+               class="absolute top-4 right-4 px-3 py-1 rounded-full text-xs font-semibold">
+            {{ event.distance | number: '1.0-2' }} km
+          </div>
+          
+          <div class="p-5">
+            <!-- Date -->
+            <div class="flex items-center mb-4 text-gray-500">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              <time class="text-sm">{{ event.dates.start | utcDate:'dd MMM yyyy, HH:mm':true }}</time>
+            </div>
+            
+            <!-- Title -->
+            <h3 class="text-xl font-bold text-gray-800 mb-2 group-hover:text-[#00829B] transition-colors">{{ event.title }}</h3>
+            
+            <!-- Description -->
+            <p class="text-gray-600 text-sm mb-4 line-clamp-2">{{ event.description }}</p>
+            
+            <!-- Action button -->
+            <div class="mt-2">
+              <a *ngIf="event.url" href="/event/{{ event.slug }}" class="inline-flex items-center text-[#00829B] hover:text-[#006d82] font-medium text-sm">
+                Plus d'informations
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Barre de navigation fixe en bas (mobile uniquement) -->
+<div class="lg:hidden fixed bottom-0 left-0 right-0 z-50 flex justify-between items-center px-4 py-3 bg-white border-t border-gray-200 shadow-[0_-2px_10px_rgba(0,0,0,0.05)]">
+  <!-- Badge compteur d'événements -->
+  <div class="bg-white rounded-full px-4 py-2 shadow-sm border border-gray-100">
+    <span class="text-sm font-medium">{{ filteredEvents.length }} événements trouvés</span>
+  </div>
+  
+  <!-- Bouton toggle avec icône adaptative -->
+  <button (click)="toggleSidebar()" 
+          class="flex items-center justify-center p-3 bg-[#00829B] text-white rounded-full shadow-md">
+    <!-- Icône pour afficher la liste -->
+    <svg *ngIf="!showSidebar" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+    </svg>
+    <!-- Icône pour cacher la liste et retourner à la carte -->
+    <svg *ngIf="showSidebar" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+    </svg>
+  </button>
 </div>

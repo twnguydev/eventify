@@ -1,87 +1,176 @@
 <app-navbar></app-navbar>
 
-<div class="bg-gray-200 antialiased pt-20 pb-20 w-full h-auto" style="height: calc(100vh - 140px)">
-  <div class="container mx-auto mt-20">
-    <div class="bg-white relative shadow rounded-lg max-w-screen mx-5 md:px-0 md:w-5/6 lg:w-4/6 xl:w-3/6 md:mx-auto">
-      <div class="flex justify-center">
-        <div class="flex justify-center">
-          <img [src]="user.avatar ? 'http://localhost:8000/storage/avatars/' + user.avatar : user.oauth_avatar"
-            alt="Avatar"
-            class="rounded-full mx-auto absolute -top-20 w-32 h-32 shadow-md border-4 border-white transition duration-200 transform hover:scale-110 hover:cursor-pointer"
-            (click)="triggerFileInput()">
-          <input type="file" id="fileInput" style="display: none;" (change)="onFileSelected($event)">
-        </div>
-        <span *ngIf="isUserNewUser"
-          class="absolute -top-10 right-0 bg-indigo-100 text-indigo-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-indigo-900 dark:text-indigo-300">
-          NOUVEL UTILISATEUR
-        </span>
-      </div>
-
-      <div class="mt-16">
-        <h1 class="font-bold text-center text-3xl text-gray-900">{{ user.name }}</h1>
-        <h3 class="text-center text-sm text-gray-500 font-medium mt-2">&#64;{{ user.pseudo }}</h3>
-        <p class="text-center text-sm text-gray-400 font-medium my-10">{{ user.bio || 'Aucune présentation.' }}</p>
-        <div class="my-5 px-6 space-y-3">
-          <button *ngIf="isOwner"
-            class="w-full text-gray-900 block rounded-lg text-center font-medium leading-6 px-6 py-3 bg-gray-200 hover:bg-gray-300 hover:text-black"
-            (click)="openEditDialog()">
-            Modifier le profil
+<div class="bg-slate-50 min-h-screen pt-6 pb-20">
+  <div class="container mx-auto px-4 md:px-6">
+    <!-- Carte principale du profil -->
+    <div class="bg-white rounded-xl shadow-sm overflow-hidden max-w-4xl mx-auto">
+      <!-- En-tête avec couverture et avatar -->
+      <div class="relative">
+        <!-- Image de couverture avec dégradé -->
+        <div class="h-40 md:h-56 bg-gradient-to-r from-[#00829B] to-[#006d82] relative">
+          <!-- Bouton modifier le profil (visible uniquement pour le propriétaire) -->
+          <button *ngIf="isOwner" 
+                  class="absolute top-4 right-4 bg-white bg-opacity-90 text-gray-700 hover:text-[#00829B] rounded-lg px-3 py-2 text-sm font-medium shadow-sm transition-colors flex items-center space-x-1"
+                  (click)="openEditDialog()">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+            </svg>
+            <span>Modifier le profil</span>
           </button>
-          <!-- <a *ngIf="!isOwner" href="#"
-            class="text-gray-200 block rounded-lg text-center font-medium leading-6 px-6 py-3 bg-gray-900 hover:bg-black hover:text-white">
-            Se connecter à <span class="font-bold">&#64;<span class="underline">{{ user.pseudo }}</span></span>
-          </a> -->
-        </div>
-        <!-- <div class="flex justify-between items-center my-5 px-6">
-          <button
-            class="text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded transition duration-150 ease-in font-medium text-sm text-center w-full py-3">0
-            abonnés
-          </button>
-          <button
-            class="text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded transition duration-150 ease-in font-medium text-sm text-center w-full py-3">0
-            abonnements
-          </button>
-        </div> -->
-
-        <div class="w-full">
-          <h3 class="font-medium text-gray-900 text-left px-6">Activité récente</h3>
-          <div class="mt-5 w-full flex flex-col items-center overflow-hidden text-sm">
-            <div *ngFor="let event of events"
-              class="flex items-center justify-between w-full">
-              <a href="/event/{{ event.slug }}" 
-                class="flex items-center justify-between w-full border-t border-gray-100 text-gray-600 py-4 pl-6 pr-3 w-full block hover:bg-gray-100 transition duration-150">
-                <div class="flex flex-col">
-                  <span>{{ event.title }}</span>
-                  <span *ngIf="event.timeAgo === '1'" class="text-green-700 text-xs mt-1">Cet événement est toujours
-                    actif.</span>
-                  <span *ngIf="event.timeAgo === '0'" class="text-red-600 text-xs mt-1">Cet événement est terminé.</span>
-                  <span *ngIf="event.visibility" class="text-gray-400 text-xs mt-1">{{ event.visibility === 'public' ? 'Accès publique' : 'Accès privé' }}</span>
-                </div>
-                <div class="flex space-x-2">
-                  <span
-                    class="me-2 px-2.5 py-0.5 rounded text-sm font-medium {{ event.role === 'organizer' ? 'bg-green-900 text-green-300' : 'bg-gray-700 text-gray-300' }}">{{
-                    event.role }}</span>
-                  <span
-                    [ngClass]="event.type === 'Groupe' ? 'bg-green-900 text-green-300' : 'bg-blue-900 text-blue-300'"
-                    class="me-2 px-2.5 py-0.5 rounded text-sm font-medium">
-                  {{ event.type }}</span>
-                </div>
-              </a>
-            </div>
-            <div *ngIf="events.length === 0" class="w-full text-center text-gray-600 mt-2 mb-10">Aucune activité récente.</div>
+          
+          <!-- Badge nouvel utilisateur -->
+          <div *ngIf="isUserNewUser" class="absolute top-4 left-4 bg-white text-[#00829B] text-xs font-medium px-2.5 py-1 rounded-full shadow-sm">
+            NOUVEL UTILISATEUR
           </div>
         </div>
+        
+        <!-- Avatar avec bordure -->
+        <div class="absolute left-1/2 transform -translate-x-1/2 -bottom-16">
+          <div class="relative group">
+            <img [src]="user.avatar ? 'http://127.0.0.1:8000/storage/avatars/' + user.avatar : user.oauth_avatar"
+                 alt="Avatar de {{ user.name }}"
+                 class="w-32 h-32 rounded-full border-4 border-white shadow-md object-cover transition duration-300 group-hover:shadow-lg"
+                 (click)="isOwner && triggerFileInput()">
+            
+            <!-- Overlay pour changer l'avatar (visible uniquement au propriétaire) -->
+            <div *ngIf="isOwner" class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 rounded-full flex items-center justify-center transition-all duration-300 opacity-0 group-hover:opacity-100 cursor-pointer" (click)="triggerFileInput()">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+            </div>
+          </div>
+          <input type="file" id="fileInput" style="display: none;" (change)="onFileSelected($event)" accept="image/*">
+        </div>
       </div>
-
-      <div class="px-6 py-6 space-y-3">
+      
+      <!-- Informations du profil -->
+      <div class="mt-20 px-6 text-center">
+        <h1 class="text-2xl font-bold text-gray-800">{{ user.name }}</h1>
+        <h3 class="text-sm text-gray-500 font-medium mt-1">&#64;{{ user.pseudo }}</h3>
+        
+        <!-- Bio avec mise en forme améliorée -->
+        <div class="max-w-lg mx-auto mt-6 bg-gray-50 rounded-lg p-4 text-gray-600 relative">
+          <p class="text-sm leading-relaxed">{{ user.bio || 'Aucune présentation.' }}</p>
+          <svg *ngIf="!user.bio" xmlns="http://www.w3.org/2000/svg" class="absolute top-2 right-2 h-4 w-4 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        
+        <!-- Statistiques du profil -->
+        <div class="flex justify-center mt-6 space-x-6">
+          <div class="flex flex-col items-center">
+            <span class="text-2xl font-bold text-gray-800">{{ events.length || 0 }}</span>
+            <span class="text-sm text-gray-500">Événements</span>
+          </div>
+          <!-- Tu peux ajouter d'autres statistiques ici si nécessaire -->
+          <!--
+          <div class="flex flex-col items-center">
+            <span class="text-2xl font-bold text-gray-800">0</span>
+            <span class="text-sm text-gray-500">Abonnés</span>
+          </div>
+          <div class="flex flex-col items-center">
+            <span class="text-2xl font-bold text-gray-800">0</span>
+            <span class="text-sm text-gray-500">Abonnements</span>
+          </div>
+          -->
+        </div>
+      </div>
+      
+      <!-- Boutons d'action -->
+      <div class="px-6 py-6 flex flex-col sm:flex-row justify-center space-y-3 sm:space-y-0 sm:space-x-3">
         <a *ngIf="isOwner" href="/organizer/new-event"
-          class="w-full text-gray-200 block rounded-lg text-center cursor-pointer font-medium leading-6 px-6 py-3 bg-gray-900 hover:bg-black hover:text-white"
-          (click)="openCreateEventDialog()">Créer un événement
+           class="inline-flex justify-center items-center px-6 py-3 bg-[#00829B] text-white font-medium rounded-lg shadow-sm hover:bg-[#006d82] transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+          </svg>
+          Créer un événement
         </a>
         <button *ngIf="isOwner"
-          class="w-full text-gray-900 block rounded-lg text-center font-medium leading-6 px-6 py-2 bg-gray-200 hover:bg-gray-300 hover:text-black"
-          (click)="logout()">Se déconnecter
+                class="inline-flex justify-center items-center px-6 py-3 border border-gray-300 bg-white text-gray-700 font-medium rounded-lg shadow-sm hover:bg-gray-50 transition-colors"
+                (click)="logout()">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+          </svg>
+          Se déconnecter
         </button>
       </div>
     </div>
+    
+    <!-- Section d'activité récente -->
+    <div class="max-w-4xl mx-auto mt-8 bg-white rounded-xl shadow-sm overflow-hidden">
+      <div class="px-6 py-4 border-b border-gray-100">
+        <h2 class="text-lg font-semibold text-gray-800">Activité récente</h2>
+      </div>
+      
+      <!-- Liste des événements -->
+      <div class="divide-y divide-gray-100">
+        <div *ngFor="let event of events" class="hover:bg-gray-50 transition-colors">
+          <a href="/event/{{ event.slug }}" class="block p-4 sm:p-6">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+              <div class="mb-2 sm:mb-0">
+                <h3 class="text-base font-medium text-gray-800 hover:text-[#00829B] transition-colors">{{ event.title }}</h3>
+                
+                <!-- Statut de l'événement -->
+                <div class="flex items-center mt-1 space-x-2">
+                  <span *ngIf="event.timeAgo === '1'" class="inline-flex items-center text-xs text-green-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Événement actif
+                  </span>
+                  <span *ngIf="event.timeAgo === '0'" class="inline-flex items-center text-xs text-red-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Événement terminé
+                  </span>
+                  <span *ngIf="event.visibility" class="inline-flex items-center text-xs text-gray-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                    {{ event.visibility === 'public' ? 'Accès public' : 'Accès privé' }}
+                  </span>
+                </div>
+              </div>
+              
+              <!-- Badges -->
+              <div class="flex flex-wrap gap-2">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ event.role === 'organizer' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' }}">
+                  <svg *ngIf="event.role === 'organizer'" xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                  </svg>
+                  {{ event.role }}
+                </span>
+                <span [ngClass]="event.type === 'Groupe' ? 'bg-emerald-100 text-emerald-800' : 'bg-blue-100 text-blue-800'" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium">
+                  <svg *ngIf="event.type === 'Groupe'" xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                  </svg>
+                  {{ event.type }}
+                </span>
+              </div>
+            </div>
+          </a>
+        </div>
+        
+        <!-- État vide -->
+        <div *ngIf="events.length === 0" class="flex flex-col items-center justify-center p-8 text-center">
+          <div class="w-16 h-16 mb-4 rounded-full bg-gray-100 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+          </div>
+          <p class="text-gray-500 mb-2">Aucune activité récente</p>
+          <p class="text-sm text-gray-400">Les événements auxquels {{ isOwner ? 'vous participez' : 'cet utilisateur participe' }} apparaîtront ici.</p>
+          <a *ngIf="isOwner" href="/organizer/new-event" class="mt-4 inline-flex items-center text-[#00829B] hover:text-[#006d82] font-medium text-sm">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+            </svg>
+            Créer votre premier événement
+          </a>
+        </div>
+      </div>
+    </div>
   </div>
+</div>

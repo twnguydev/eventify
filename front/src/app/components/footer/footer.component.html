@@ -1,20 +1,25 @@
-<footer class="bg-gray-800 text-white py-4 px-6">
-  <div class="flex flex-col md:flex-row justify-between items-center space-y-4 lg:space-y-0">
-
-    <div class="flex items-center space-x-4">
-      <a class="text-3xl font-bold leading-none" href="#">
-        Eventify
-      </a>
-      <div class="text-sm">
-        <p>Développé par :</p>
-        <p class="font-semibold">Romain F. et Tanguy G.</p>
+<footer class="relative bg-white border-t border-gray-200 py-3 text-gray-700 shadow-sm z-50">
+  <div class="container mx-auto px-4">
+    <div class="flex flex-col md:flex-row justify-between items-center space-y-3 md:space-y-0">
+      <!-- Logo et développeurs -->
+      <div class="flex items-center space-x-3">
+        <div class="flex items-center">
+          <span class="text-xl font-bold text-gray-800 tracking-tight">Eventify</span>
+        </div>
+        <div class="hidden md:block h-6 w-px bg-gray-300 mx-2"></div>
+        <div class="text-xs text-gray-500">
+          <span>Développé par </span>
+          <span class="font-medium text-gray-700">Romain F. et Tanguy G.</span>
+        </div>
       </div>
-    </div>
 
-    <div class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-6 text-sm text-center md:text-left">
-      <a href="/legal/mentions" class="hover:underline">Mentions légales</a>
-      <a href="/legal/cgu" class="hover:underline">CGU</a>
-      <a href="/contact" class="hover:underline">Contact</a>
+      <!-- Liens -->
+      <div class="flex items-center space-x-5 text-xs">
+        <a href="/legal/mentions" class="text-gray-500 hover:text-[#00829B] transition-colors">Mentions légales</a>
+        <a href="/legal/cgu" class="text-gray-500 hover:text-[#00829B] transition-colors">CGU</a>
+        <a href="/contact" class="text-gray-500 hover:text-[#00829B] transition-colors">Contact</a>
+        <span class="text-gray-400">© {{ currentYear }}</span>
+      </div>
     </div>
   </div>
 </footer>

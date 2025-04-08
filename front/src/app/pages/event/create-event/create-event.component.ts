@@ -27,6 +27,7 @@ import { IEvent, ILocation } from '@interfaces/event.interface';
 })
 export class CreateEventComponent implements OnInit {
   today: Date = new Date();
+  window = window;
 
   events: any[] = [];
 

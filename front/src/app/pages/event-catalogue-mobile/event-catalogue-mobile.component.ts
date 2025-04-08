@@ -53,7 +53,7 @@ export class EventCatalogueMobileComponent implements OnInit {
   onResize(event: any) {
     const width = event.target.innerWidth;
 
-    if (width <= 768) {
+    if (width <= 1024) {
       this.router.navigate(['/m/event-list']);
     } else {
       this.router.navigate(['/event-list']);

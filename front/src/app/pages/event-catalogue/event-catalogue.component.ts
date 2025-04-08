@@ -28,6 +28,9 @@ export class EventCatalogueComponent implements OnInit {
   filteredEvents = this.events;
   isMapLoading: boolean = true;
   isCatalogueNull: boolean = false;
+  showAdvancedFilters: boolean = false;
+  showSidebar: boolean = false;
+  public innerWidth: number = 0;
 
   cityName: string | null = null;
   eventName: string | null = null;
@@ -51,19 +54,26 @@ export class EventCatalogueComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.innerWidth = window.innerWidth;
     this.initializeMap();
     this.getUserLocation();
+    
+    // Set default sidebar visibility based on screen size
+    this.showSidebar = window.innerWidth >= 1024; // lg breakpoint
+    
+    // Applique les styles de carte personnalisés
+    setTimeout(() => {
+      this.applyMapStyle();
+    }, 500);
   }
 
   @HostListener('window:resize', ['$event'])
   onResize(event: any) {
-    const width = event.target.innerWidth;
+    this.innerWidth = event.target.innerWidth;
+  }
 
-    if (width <= 768) {
-      this.router.navigate(['/m/event-list']);
-    } else {
-      this.router.navigate(['/event-list']);
-    }
+  toggleSidebar() {
+    this.showSidebar = !this.showSidebar;
   }
 
   loadEvents() {
@@ -73,6 +83,8 @@ export class EventCatalogueComponent implements OnInit {
 
       if (this.events.length === 0) {
         this.isCatalogueNull = true;
+      } else {
+        this.isCatalogueNull = false;
       }
 
       this.calculateDistances();
@@ -84,24 +96,24 @@ export class EventCatalogueComponent implements OnInit {
         this.map.setView([46.603354, 1.888334], 6);
         setTimeout(() => {
           this.isMapLoading = false;
-        }, 1500);
+        }, 800);
       } else {
         if (this.isSearchingOwnCity(this.cityName)) {
           this.map.setView([this.userLocation.lat, this.userLocation.lng], 13);
           setTimeout(() => {
             this.isMapLoading = false;
-          }, 1500);
+          }, 800);
         } else {
           this.getCityCoordinates(this.cityName).subscribe(coords => {
             this.map.setView([coords.lat, coords.lng], 13);
             setTimeout(() => {
               this.isMapLoading = false;
-            }, 1500);
+            }, 800);
           }, error => {
             console.error('Erreur lors de l\'obtention des coordonnées de la ville:', error);
             setTimeout(() => {
               this.isMapLoading = false;
-            }, 1500);
+            }, 800);
           });
         }
       }
@@ -138,15 +150,27 @@ export class EventCatalogueComponent implements OnInit {
 
   initializeMap() {
     this.isMapLoading = true;
-    this.map = L.map('map').setView([51.505, -0.09], 13);
+    
+    // Custom map style with better colors and contrast
+    this.map = L.map('map', {
+      zoomControl: false, // We'll add it in a custom position
+      attributionControl: false // Hide default attribution
+    }).setView([51.505, -0.09], 13);
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; OpenStreetMap contributors'
+    // Add custom map tiles (Mapbox or other stylish tiles)
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+      subdomains: 'abcd',
+      maxZoom: 19
     }).addTo(this.map).on('load', () => {
       setTimeout(() => {
         this.isMapLoading = false;
-      }, 1500);
+      }, 800);
     });
+
+    // Add zoom control in the bottom right
+    L.control.zoom({
+      position: 'bottomright'
+    }).addTo(this.map);
   }
 
   getUserLocation() {
@@ -162,38 +186,65 @@ export class EventCatalogueComponent implements OnInit {
 
           this.map.setView([this.userLocation.lat, this.userLocation.lng], 13);
 
-          const userIcon = L.divIcon({
-            html: `<svg xmlns="http://www.w3.org/1500/svg" viewBox="0 0 384 512" width="30" height="30">
-                    <path fill="red" d="M215.7 499.2C267 435 384 279.4 384 192C384 86 298 0 192 0S0 86 0 192c0 87.4 117 243 168.3 307.2c12.3 15.3 35.1 15.3 47.4 0zM192 128a64 64 0 1 1 0 128 64 64 0 1 1 0-128z"/>
-                   </svg>`,
+          // Modern user location marker with pulsing effect
+          const pulsingIcon = L.divIcon({
+            html: `
+              <div class="relative">
+                <div class="w-6 h-6 bg-[#00829B] rounded-full flex items-center justify-center z-20 relative shadow-lg">
+                  <div class="w-4 h-4 bg-white rounded-full"></div>
+                </div>
+              </div>
+            `,
             className: '',
-            iconSize: [30, 30]
+            iconSize: [24, 24],
+            iconAnchor: [12, 12]
           });
 
-          L.marker([this.userLocation.lat, this.userLocation.lng], { icon: userIcon })
+          L.marker([this.userLocation.lat, this.userLocation.lng], { icon: pulsingIcon })
             .addTo(this.map)
-            .bindPopup('Vous êtes ici.')
+            .bindPopup('<div class="font-medium">Votre position actuelle</div>')
             .openPopup();
 
           this.reverseGeocode(this.userLocation.lat, this.userLocation.lng);
           setTimeout(() => {
             this.isMapLoading = false;
-          }, 1500);
+          }, 800);
         },
         error => {
           console.error('Erreur lors de la géolocalisation:', error);
-          alert('Impossible de récupérer la géolocalisation. Veuillez vérifier vos paramètres.');
+          
+          // Show a nicer error message
+          const errorPopup = L.popup()
+            .setLatLng([46.603354, 1.888334])
+            .setContent(`
+              <div class="p-2 text-center">
+                <p class="font-medium text-gray-800 mb-2">Localisation non disponible</p>
+                <p class="text-sm text-gray-600">Veuillez vérifier vos paramètres de navigation.</p>
+              </div>
+            `)
+            .openOn(this.map);
+            
           setTimeout(() => {
             this.isMapLoading = false;
-          }, 1500);
+          }, 800);
         },
         { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
       );
     } else {
-      alert('La géolocalisation n\'est pas supportée par votre navigateur.');
+      // Show a nicer message for unsupported browsers
+      const browserPopup = L.popup()
+        .setLatLng([46.603354, 1.888334])
+        .setContent(`
+          <div class="p-2 text-center">
+            <p class="font-medium text-gray-800 mb-2">Géolocalisation non supportée</p>
+            <p class="text-sm text-gray-600">Votre navigateur ne supporte pas la géolocalisation.</p>
+          </div>
+        `)
+        .openOn(this.map);
+        
       setTimeout(() => {
         this.isMapLoading = false;
-      }, 1500);
+      }, 800);
     }
   }
 
@@ -237,65 +288,152 @@ export class EventCatalogueComponent implements OnInit {
     );
     if (this.filteredEvents.length === 0) {
       this.isCatalogueNull = true;
+    } else {
+      this.isCatalogueNull = false;
     }
     this.onSortChange();
     setTimeout(() => {
       this.isMapLoading = false;
-    }, 1500);
+    }, 800);
   }
 
   displayEventMarkers() {
     this.isMapLoading = true;
+    // Supprime les marqueurs existants
     this.eventMarkers.forEach(marker => marker.remove());
     this.eventMarkers = [];
 
+    // Création d'un groupe de marqueurs pour faciliter la gestion
+    const markerGroup = L.featureGroup().addTo(this.map);
+
+    // Icône personnalisée pour les événements
     const eventIcon = L.divIcon({
-      html: `<svg xmlns="http://www.w3.org/1500/svg" viewBox="0 0 384 512" width="30" height="30">
-              <path fill="black" d="M215.7 499.2C267 435 384 279.4 384 192C384 86 298 0 192 0S0 86 0 192c0 87.4 117 243 168.3 307.2c12.3 15.3 35.1 15.3 47.4 0zM192 128a64 64 0 1 1 0 128 64 64 0 1 1 0-128z"/>
-             </svg>`,
+      html: `
+        <div class="flex items-center justify-center">
+          <div class="w-8 h-8 rounded-lg bg-white shadow-md flex items-center justify-center transform hover:scale-110 transition-transform">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[#00829B]" viewBox="0 0 20 20" fill="#00829B">
+              <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd" />
+            </svg>
+          </div>
+        </div>
+      `,
       className: '',
-      iconSize: [20, 20]
+      iconSize: [32, 32],
+      iconAnchor: [16, 16]
     });
 
+    // Crée un popup personnalisé pour chaque événement
     this.filteredEvents.forEach(event => {
       if (event.location?.coordinates?.length === 2) {
         const eventLat: number = event.location.coordinates[0];
         const eventLng: number = event.location.coordinates[1];
-  
+        
         const city = event.location.city || 'Ville non spécifiée';
-  
-        const marker = L.marker([eventLat, eventLng], { icon: eventIcon })
-          .addTo(this.map)
-          .bindPopup(`<strong>${event.title}</strong><br><br>${event.description}<br>${city}<br><br><a href="/event/${event.slug}" target="_blank">Voir l'événement</a>`);
-  
+        const distance = event.distance !== undefined ? 
+          `<span class="text-sm ${event.distance < 10 ? 'text-green-600' : event.distance < 50 ? 'text-yellow-600' : 'text-red-600'}">
+            ${event.distance.toFixed(1)} km de votre position
+           </span>` : '';
+        
+        // Création d'un popup stylisé
+        const popupContent = `
+          <div class="p-3 max-w-xs">
+            <h3 class="font-bold text-lg text-gray-800 mb-2">${event.title}</h3>
+            <div class="flex items-center text-gray-500 text-sm mb-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              ${new Date(event.dates.start).toLocaleDateString('fr-FR', {day: '2-digit', month: 'short', year: 'numeric'})}
+            </div>
+            <div class="flex items-center text-gray-500 text-sm mb-3">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+              ${city}
+            </div>
+            ${distance ? `<div class="mb-3">${distance}</div>` : ''}
+            <p class="text-sm text-gray-600 mb-3 line-clamp-3">${event.description.substring(0, 120)}${event.description.length > 120 ? '...' : ''}</p>
+            <a href="/event/${event.slug}" class="inline-block py-2 px-4 bg-[#00829B] hover:bg-[#006d82] text-white text-center text-sm font-medium rounded-lg transition-colors w-full" style="color: #fff;">
+              Voir l'événement
+            </a>
+          </div>
+        `;
+        
+        // Options de popup personnalisées
+        const popupOptions = {
+          className: 'custom-popup',
+          maxWidth: 300,
+          minWidth: 250,
+          closeButton: true,
+          offset: [0, -10] as [number, number]
+        };
+
+        const marker = L.marker([eventLat, eventLng], { 
+          icon: eventIcon,
+          riseOnHover: true,
+          title: event.title
+        })
+        .bindPopup(popupContent, popupOptions);
+        
+        // Ajouter l'écouteur d'événements avec une référence explicite
+        marker.on('mouseover', (e) => {
+          marker.openPopup();
+        });
+        
+        // Ajoute le marqueur au groupe et à la liste des marqueurs
+        marker.addTo(markerGroup);
         this.eventMarkers.push(marker);
       } else {
         console.warn(`L'événement "${event.title}" n'a pas de coordonnées valides.`);
       }
     });
+
+    // Si des marqueurs sont présents, adapte la vue pour les afficher tous
+    if (this.eventMarkers.length > 0 && (!this.cityName || this.cityName.trim() === '')) {
+      try {
+        this.map.fitBounds(markerGroup.getBounds(), {
+          padding: [50, 50],
+          maxZoom: 13
+        });
+      } catch (e) {
+        console.warn("Impossible d'ajuster la vue sur les marqueurs", e);
+      }
+    }
+
     setTimeout(() => {
       this.isMapLoading = false;
-    }, 1500);
+    }, 800);
   }
 
   onCityNameChange() {
     if (this.cityName !== null) {
       this.cityNameChanged.next(this.cityName.trim());
+      
+      // Affiche un indicateur de chargement dans la barre de recherche
+      const searchInput = document.querySelector('input[placeholder="Rechercher une ville..."]') as HTMLInputElement;
+      if (searchInput) {
+        searchInput.classList.add('animate-pulse');
+        setTimeout(() => {
+          searchInput.classList.remove('animate-pulse');
+        }, 800);
+      }
     }
   }
 
   onEventNameChange() {
-    this.isMapLoading = true;
-    this.loadEvents();
-    this.displayEventMarkers();
-  }
-
-  onLimitChange() {
-    this.isMapLoading = true;
-    this.loadEvents();
+    this.applyFilters();
   }
 
   onSortChange() {
+    // Feedback visuel du changement de tri
+    const listContainer = document.querySelector('ul');
+    if (listContainer) {
+      listContainer.classList.add('scale-98', 'transition-transform');
+      setTimeout(() => {
+        listContainer.classList.remove('scale-98');
+      }, 300);
+    }
+    
     if (this.sort === 'date_asc') {
       this.filteredEvents.sort((a, b) => new Date(a.dates.start).getTime() - new Date(b.dates.start).getTime());
     } else if (this.sort === 'date_desc') {
@@ -303,13 +441,33 @@ export class EventCatalogueComponent implements OnInit {
     }
     this.displayEventMarkers();
   }
-
+  
   onDistanceChange() {
+    // Animation pour le changement de tri par distance
+    const markers = document.querySelectorAll('.leaflet-marker-icon');
+    markers.forEach(marker => {
+      marker.classList.add('animate-bounce');
+      setTimeout(() => {
+        marker.classList.remove('animate-bounce');
+      }, 500);
+    });
+    
     if (this.distance === 'distance_asc') {
       this.filteredEvents.sort((a, b) => (a.distance || 0) - (b.distance || 0));
     } else if (this.distance === 'distance_desc') {
       this.filteredEvents.sort((a, b) => (b.distance || 0) - (a.distance || 0));
     }
     this.displayEventMarkers();
+  }
+
+  applyMapStyle() {
+    const mapContainer = document.querySelector('.leaflet-container');
+    if (mapContainer) {
+      mapContainer.classList.add('custom-map-style');
+    }
+  }
+
+  onLimitChange() {
+    this.loadEvents();
   }
 }

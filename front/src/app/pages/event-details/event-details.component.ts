@@ -145,8 +145,9 @@ export class EventDetailsComponent implements OnInit {
     if (document.getElementById('map')) {
       this.map = L.map('map', { zoomControl: false }).setView([46.603354, 1.888334], 5);
 
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap contributors'
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+        subdomains: 'abcd',
+        maxZoom: 19
       }).addTo(this.map);
     }
   }
