@@ -30,6 +30,8 @@ export class EventCatalogueComponent implements OnInit {
   isCatalogueNull: boolean = false;
   showAdvancedFilters: boolean = false;
   showSidebar: boolean = false;
+  private debounceTimer: any = null;
+  private readonly DEBOUNCE_DELAY = 300;
   public innerWidth: number = 0;
 
   cityName: string | null = null;

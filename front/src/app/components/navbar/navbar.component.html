@@ -37,7 +37,7 @@
       </a>
     </li>
     <li>
-      <a class="px-4 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors flex items-center space-x-1" href="/my-events">
+      <a class="px-4 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors flex items-center space-x-1" href="/organizer/new-event">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
         </svg>
@@ -82,14 +82,6 @@
             <span>Mon profil</span>
           </div>
         </a>
-        <a href="/my-events" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-          <div class="flex items-center space-x-2">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-            </svg>
-            <span>Mes événements</span>
-          </div>
-        </a>
         <a href="/settings" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
           <div class="flex items-center space-x-2">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -100,14 +92,17 @@
           </div>
         </a>
         <div class="border-t border-gray-100 my-1"></div>
-        <a href="/logout" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50">
+        <button
+          (click)="logout()"
+          class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50 w-full"
+        >
           <div class="flex items-center space-x-2">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
             </svg>
             <span>Déconnexion</span>
           </div>
-        </a>
+        </button>
       </div>
     </div>
   </div>
@@ -170,15 +165,6 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
           </svg>
           <span>Explorer les événements</span>
-        </a>
-        
-        <a *ngIf="this.authenticatedUser"
-           class="flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors"
-           href="/my-events">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-          </svg>
-          <span>Mes événements</span>
         </a>
         
         <a *ngIf="this.authenticatedUser"
